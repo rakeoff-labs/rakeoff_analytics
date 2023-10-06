@@ -1,0 +1,29 @@
+{
+  "canisters": {
+    "analytics_backend": {
+      "main": "src/analytics_backend/main.mo",
+      "type": "motoko"
+    },
+    "analytics_frontend": {
+      "dependencies": [
+        "analytics_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/analytics_frontend/src/index.html"
+      },
+      "source": [
+        "src/analytics_frontend/assets",
+        "dist/analytics_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
