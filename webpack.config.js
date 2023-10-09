@@ -47,6 +47,8 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      { test: /\.(gif|svg|jpg|png|ico|jpeg)$/, loader: "file-loader" },
+
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
     ],
   },
