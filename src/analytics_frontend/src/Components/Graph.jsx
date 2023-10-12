@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Box, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid, Container } from "@chakra-ui/react";
 const data = [
   {
     name: "Page A",
@@ -56,70 +56,72 @@ const data = [
 
 const Graph = () => {
   return (
-    <SimpleGrid columns={[1, 1, 2]} spacing={5}>
-      <Box
-        width="600px"
-        borderWidth="1px"
-        position="relative"
-        borderRadius="lg"
-        overflow="hidden"
-        height="600px"
-      >
-        <ResponsiveContainer>
-          <AreaChart
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="uv"
-              stroke="#8884d8"
-              fill="#8884d8"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </Box>
-      <Box
-        width="600px"
-        borderWidth="1px"
-        position="relative"
-        borderRadius="lg"
-        overflow="hidden"
-        height="600px"
-      >
-        <ResponsiveContainer>
-          <AreaChart
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="uv"
-              stroke="#8884d8"
-              fill="#8884d8"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </Box>
-    </SimpleGrid>
+    <Container maxW="7xl" mt={{ base: 12, md: "5rem" }} p={0}>
+      <SimpleGrid columns={[1, 1, 2]} spacing={5}>
+        <Box
+          width="600px"
+          borderWidth="1px"
+          position="relative"
+          borderRadius="lg"
+          overflow="hidden"
+          height="600px"
+        >
+          <ResponsiveContainer>
+            <AreaChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="uv"
+                stroke="#8884d8"
+                fill="#8884d8"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+        <Box
+          width="600px"
+          borderWidth="1px"
+          position="relative"
+          borderRadius="lg"
+          overflow="hidden"
+          height="600px"
+        >
+          <ResponsiveContainer>
+            <AreaChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="uv"
+                stroke="#8884d8"
+                fill="#8884d8"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Box>
+      </SimpleGrid>
+    </Container>
   );
 };
 
