@@ -1,7 +1,7 @@
 {
   "canisters": {
-    "analytics_backend": {
-      "main": "src/analytics_backend/main.mo",
+    "RakeoffAnalytics": {
+      "main": "src/analytics_backend/RakeoffAnalytics.mo",
       "type": "motoko"
     },
     "analytics_frontend": {

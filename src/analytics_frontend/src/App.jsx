@@ -8,6 +8,8 @@ import {
   Graph,
   Banner,
   MarketPrices,
+  Footer,
+  Overview,
 } from "./Components";
 
 const App = () => {
@@ -18,9 +20,11 @@ const App = () => {
         <Banner />
         <Searchbar />
         <MarketPrices />
+        <Overview />
         <Graph />
         <Dashboard />
         <Transactions />
+        <Footer />
       </Box>
     </Flex>
   );

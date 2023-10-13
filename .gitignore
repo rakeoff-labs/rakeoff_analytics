@@ -19,3 +19,7 @@ dist/
 
 # environment variables
 .env
+
+# configs
+
+canister_ids.json

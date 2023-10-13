@@ -6,7 +6,6 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  Text,
   Image,
   Drawer,
   DrawerContent,
