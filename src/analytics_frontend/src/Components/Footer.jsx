@@ -7,11 +7,11 @@ import {
   Image as ChakraImage,
   Flex,
 } from "@chakra-ui/react";
-import logowhite from "../../../assets/logo_name_white.png";
-import githubwhite from "../../../assets/github_white.png";
-import twitterwhite from "../../../assets/twitter_white.png";
-import discordwhite from "../../../assets/discord_white.png";
-import mediumwhite from "../../../assets/medium_white.png";
+import logowhite from "../../assets/logo_name_white.png";
+import githubwhite from "../../assets/github_white.png";
+import twitterwhite from "../../assets/twitter_white.png";
+import discordwhite from "../../assets/discord_white.png";
+import mediumwhite from "../../assets/medium_white.png";
 import { Icon } from "@chakra-ui/react";
 
 const Footer = () => {

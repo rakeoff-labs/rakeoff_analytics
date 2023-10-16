@@ -12,7 +12,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
-import logo_white from "../../../assets/logo_white.png";
+import logo_white from "../../assets/logo_white.png";
 
 const LinkItems = [
   { name: "Home", icon: WarningIcon },
