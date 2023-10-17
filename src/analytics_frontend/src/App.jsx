@@ -5,7 +5,7 @@ import {
   Sidebar,
   Transactions,
   Searchbar,
-  Graph,
+  // Graph,
   Banner,
   MarketPrices,
   Footer,
@@ -21,7 +21,7 @@ const App = () => {
         <Searchbar />
         <MarketPrices />
         <Overview />
-        <Graph />
+        {/* <Graph /> */}
         <Dashboard />
         <Transactions />
         <Footer />

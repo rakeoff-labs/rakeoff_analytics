@@ -1,4 +1,5 @@
 import RakeoffStatisticsInterface "./RakeoffStatisticsInterface/statistics";
+import RakeoffAchievementsInterface "./RakeoffAchievementsInterface/achievements";
 import RakeoffKernelInterface "./RakeoffKernelInterface/kernel";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
@@ -29,6 +30,7 @@ actor RakeoffAnalytics {
     icp_earned_from_swap : Nat64;
     last_winner : (Principal, Nat64);
     icp_in_lotto : Nat64;
+    icp_earned_from_disbursement : Nat64;
 
   };
 
@@ -37,4 +39,23 @@ actor RakeoffAnalytics {
     return kernelstats;
   };
 
+  let rakeoffAchievements : RakeoffAchievementsInterface.Self = actor "4llet-lqaaa-aaaai-qpbkq-cai";
+
+  public type CanisterAccount = {
+    icp_claimed : Nat64;
+    ongoing_transfers : [(Principal, Nat64)];
+    icp_balance : Nat64;
+  };
+
+  public shared func getAchievementStats() : async ?CanisterAccount {
+    let result = await rakeoffAchievements.get_canister_account_and_stats();
+    switch (result) {
+      case (#ok(canisterAccount)) {
+        return ?canisterAccount;
+      };
+      case (#err(_)) {
+        return null;
+      };
+    };
+  };
 };
