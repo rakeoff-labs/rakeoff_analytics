@@ -1,61 +1,47 @@
 import RakeoffStatisticsInterface "./RakeoffStatisticsInterface/statistics";
 import RakeoffAchievementsInterface "./RakeoffAchievementsInterface/achievements";
 import RakeoffKernelInterface "./RakeoffKernelInterface/kernel";
-import HashMap "mo:base/HashMap";
-import Iter "mo:base/Iter";
-import Principal "mo:base/Principal";
-import Result "mo:base/Result";
 
 actor RakeoffAnalytics {
 
   let RakeoffStatistics : RakeoffStatisticsInterface.Self = actor "jgvzt-eiaaa-aaaak-ae5kq-cai";
 
-  public type RakeoffStats = {
+  let RakeoffKernel : RakeoffKernelInterface.Self = actor "rktkb-jiaaa-aaaap-aa23a-cai";
+
+  public type AnalyticsData = {
+    total_icp_rewarded : Nat64;
     total_icp_stakers : Nat;
     total_icp_staked : Nat64;
-    total_icp_rewarded : Nat64;
-  };
-
-  public shared func get_rakeoff_stats() : async RakeoffStats {
-    let stats = await RakeoffStatistics.get_rakeoff_stats();
-    return stats;
-  };
-
-  let rakeoffAnalyticsCanister : RakeoffKernelInterface.Self = actor "rktkb-jiaaa-aaaap-aa23a-cai";
-
-  public type CanisterStats = {
-
-    total_ckbtc_exchanged : Nat;
-    icp_fees_collected : Nat64;
     icp_earned_from_swap : Nat64;
+    lotto_winners : [(Principal, Nat64)];
+    icp_fees_collected : Nat64;
+    price_per_ticket : Nat64;
+    tickets_in_lotto : Nat;
+    max_tickets_allowed : Nat;
     last_winner : (Principal, Nat64);
-    icp_in_lotto : Nat64;
+    total_ckbtc_exchanged : Nat;
     icp_earned_from_disbursement : Nat64;
-
+    icp_in_lotto : Nat64;
   };
 
-  public shared func getCanisterStats() : async CanisterStats {
-    let kernelstats = await rakeoffAnalyticsCanister.get_canister_stats();
-    return kernelstats;
-  };
-
-  let rakeoffAchievements : RakeoffAchievementsInterface.Self = actor "4llet-lqaaa-aaaai-qpbkq-cai";
-
-  public type CanisterAccount = {
-    icp_claimed : Nat64;
-    ongoing_transfers : [(Principal, Nat64)];
-    icp_balance : Nat64;
-  };
-
-  public shared func getAchievementStats() : async ?CanisterAccount {
-    let result = await rakeoffAchievements.get_canister_account_and_stats();
-    switch (result) {
-      case (#ok(canisterAccount)) {
-        return ?canisterAccount;
-      };
-      case (#err(_)) {
-        return null;
-      };
+  public shared func get_rakeoff_analytics() : async AnalyticsData {
+    let kernelstats = await RakeoffKernel.get_canister_stats();
+    let statistics = await RakeoffStatistics.get_rakeoff_stats();
+    return {
+      total_icp_rewarded = statistics.total_icp_rewarded;
+      total_icp_stakers = statistics.total_icp_stakers;
+      total_icp_staked = statistics.total_icp_staked;
+      icp_earned_from_swap = kernelstats.icp_earned_from_swap;
+      lotto_winners = kernelstats.lotto_winners;
+      icp_fees_collected = kernelstats.icp_fees_collected;
+      price_per_ticket = kernelstats.price_per_ticket;
+      tickets_in_lotto = kernelstats.tickets_in_lotto;
+      max_tickets_allowed = kernelstats.max_tickets_allowed;
+      last_winner = kernelstats.last_winner;
+      total_ckbtc_exchanged = kernelstats.total_ckbtc_exchanged;
+      icp_earned_from_disbursement = kernelstats.icp_earned_from_disbursement;
+      icp_in_lotto = kernelstats.icp_in_lotto;
     };
   };
+
 };

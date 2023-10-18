@@ -1,16 +1,15 @@
-import { HttpAgent } from "@dfinity/agent";
-import { LedgerCanister } from "@dfinity/nns";
+import { Actor, HttpAgent } from "@dfinity/agent";
+import { idlFactory as analytics_backendIDL } from "../../../declarations/analytics_backend/index";
 
-import { AuthClient } from "@dfinity/auth-client";
+export const startAnalyticsClient = async () => {
+  const canisterId = process.env.REACT_APP_RAKEOFF_ANALYTICS_CANISTER_ID;
 
-export const startLedgerClient = async () => {
-  const authClient = await AuthClient.create();
-  const identity = await authClient.getIdentity();
+  console.log("my canisterID", canisterId);
 
-  return LedgerCanister.create({
+  return Actor.createActor(analytics_backendIDL, {
     agent: new HttpAgent({
-      identity,
       host: "https://icp-api.io",
     }),
+    canisterId: canisterId,
   });
 };

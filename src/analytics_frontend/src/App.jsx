@@ -10,6 +10,7 @@ import {
   MarketPrices,
   Footer,
   Overview,
+  Stat,
 } from "./Components";
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
         <Banner />
         <Searchbar />
         <MarketPrices />
+        <Stat />
         <Overview />
         {/* <Graph /> */}
         <Dashboard />

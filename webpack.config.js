@@ -4,6 +4,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+require("dotenv").config({ path: "./.env" });
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -77,6 +78,9 @@ module.exports = {
           noErrorOnMissing: true,
         },
       ],
+    }),
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env),
     }),
   ],
   // proxy /api to port 4943 during development.
