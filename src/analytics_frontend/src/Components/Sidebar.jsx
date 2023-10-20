@@ -12,7 +12,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
-import logo_white from "../../assets/logo_white.png";
+import logo from "../../assets/logo.svg";
 
 const LinkItems = [
   { name: "Home", icon: WarningIcon },
@@ -63,7 +63,7 @@ const SidebarContent = (props) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Image src={logo_white} mt={4} h="70px" w="auto" alt="Rakeoff logo" />
+        <Image src={logo} mt={4} h="70px" w="auto" alt="Rakeoff logo" />
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
