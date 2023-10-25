@@ -3,7 +3,6 @@ import { Box, Flex } from "@chakra-ui/react";
 import {
   Sidebar,
   Searchbar,
-  // Graph,
   Banner,
   MarketPrices,
   Footer,
@@ -20,7 +19,6 @@ const App = () => {
         <MarketPrices />
         <Stat />
         {/* <Graph /> */}
-
         <Footer />
       </Box>
     </Flex>

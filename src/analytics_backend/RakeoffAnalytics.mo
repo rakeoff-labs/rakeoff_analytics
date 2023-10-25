@@ -1,12 +1,15 @@
 import RakeoffStatisticsInterface "./RakeoffStatisticsInterface/statistics";
 import RakeoffAchievementsInterface "./RakeoffAchievementsInterface/achievements";
 import RakeoffKernelInterface "./RakeoffKernelInterface/kernel";
+import IndexInterface "./IndexInterface/index";
 
 actor RakeoffAnalytics {
 
   let RakeoffStatistics : RakeoffStatisticsInterface.Self = actor "jgvzt-eiaaa-aaaak-ae5kq-cai";
 
   let RakeoffKernel : RakeoffKernelInterface.Self = actor "rktkb-jiaaa-aaaap-aa23a-cai";
+
+  // let IndexCanister : IndexInterface.Self = actor "qhbym-qaaaa-aaaaa-aaafq-cai";
 
   public type AnalyticsData = {
     total_icp_rewarded : Nat64;
@@ -22,6 +25,7 @@ actor RakeoffAnalytics {
     total_ckbtc_exchanged : Nat;
     icp_earned_from_disbursement : Nat64;
     icp_in_lotto : Nat64;
+
   };
 
   public shared func get_rakeoff_analytics() : async AnalyticsData {
