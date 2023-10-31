@@ -7,7 +7,7 @@ import {
   Image as ChakraImage,
   Flex,
 } from "@chakra-ui/react";
-import logowhite from "../../assets/logo_name_white.png";
+import footer from "../../assets/footer.svg";
 import githubwhite from "../../assets/github_white.png";
 import twitterwhite from "../../assets/twitter_white.png";
 import discordwhite from "../../assets/discord_white.png";
@@ -38,7 +38,7 @@ const Footer = () => {
               w="auto"
               h={45}
               objectFit="contain"
-              src={logowhite}
+              src={footer}
             />
             <Box ml={2} color="white" fontSize="md">
               crew@rakeoff.io

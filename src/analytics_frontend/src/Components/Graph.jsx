@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PureComponent } from "react";
 import {
   AreaChart,
   Area,
@@ -8,7 +8,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Box, SimpleGrid, Container } from "@chakra-ui/react";
+import { Box, Container } from "@chakra-ui/react";
+import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
+
 const data = [
   {
     name: "Page A",
@@ -54,75 +56,61 @@ const data = [
   },
 ];
 
-const Graph = () => {
-  return (
-    <Container maxW="7xl" mt={{ base: 12, md: "5rem" }} p={0}>
-      <SimpleGrid columns={[1, 1, 2]} spacing={5}>
-        <Box
-          width="600px"
-          borderWidth="1px"
-          position="relative"
-          borderRadius="lg"
-          overflow="hidden"
-          height="600px"
-        >
-          <ResponsiveContainer>
-            <AreaChart
-              data={data}
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="uv"
-                stroke="#8884d8"
-                fill="#8884d8"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-        <Box
-          width="600px"
-          borderWidth="1px"
-          position="relative"
-          borderRadius="lg"
-          overflow="hidden"
-          height="600px"
-        >
-          <ResponsiveContainer>
-            <AreaChart
-              data={data}
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="uv"
-                stroke="#8884d8"
-                fill="#8884d8"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Box>
-      </SimpleGrid>
-    </Container>
-  );
-};
+export default class Graph extends PureComponent {
+  static demoUrl = "https://codesandbox.io/s/stacked-area-chart-ix341";
 
-export default Graph;
+  render() {
+    return (
+      <Box
+        bg={boxBackgroundColor}
+        border={boxBorderColor}
+        borderRadius="2xl"
+        justifyContent="start"
+        py={150}
+        transition="transform 0.3s"
+        _hover={{ transform: "translateY(-5px)" }}
+        cursor="pointer"
+        align="center"
+        m={2}
+      >
+        <ResponsiveContainer>
+          <AreaChart
+            data={data}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Area
+              type="monotone"
+              dataKey="uv"
+              stackId="1"
+              stroke="#8884d8"
+              fill="#8884d8"
+            />
+            <Area
+              type="monotone"
+              dataKey="pv"
+              stackId="1"
+              stroke="#82ca9d"
+              fill="#82ca9d"
+            />
+            <Area
+              type="monotone"
+              dataKey="amt"
+              stackId="1"
+              stroke="#ffc658"
+              fill="#ffc658"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </Box>
+    );
+  }
+}

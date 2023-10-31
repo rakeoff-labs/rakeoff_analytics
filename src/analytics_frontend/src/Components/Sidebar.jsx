@@ -15,11 +15,10 @@ import { WarningIcon } from "@chakra-ui/icons";
 import logo from "../../assets/logo.svg";
 
 const LinkItems = [
-  { name: "Home", icon: WarningIcon },
-  { name: "Trending", icon: WarningIcon },
-  { name: "Explore", icon: WarningIcon },
-  { name: "Favourites", icon: WarningIcon },
-  { name: "Settings", icon: WarningIcon },
+  { name: "Overview" },
+  { name: "Reports" },
+  { name: "Fees/Revenue" },
+  { name: "Token usage" },
 ];
 
 export default function Sidebar() {
