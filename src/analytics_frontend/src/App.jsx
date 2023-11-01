@@ -8,6 +8,7 @@ import {
   Footer,
   Stat,
   Graph,
+  Transactions,
 } from "./Components";
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
         <MarketPrices />
         <Stat />
         <Graph />
+        <Transactions />
         <Footer />
       </Box>
     </Flex>

@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import {
   AreaChart,
   Area,
@@ -6,10 +6,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { Box, Container } from "@chakra-ui/react";
 import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
+
+import { Box, SimpleGrid, Heading } from "@chakra-ui/react";
 
 const data = [
   {
@@ -56,25 +56,27 @@ const data = [
   },
 ];
 
-export default class Graph extends PureComponent {
-  static demoUrl = "https://codesandbox.io/s/stacked-area-chart-ix341";
-
-  render() {
-    return (
-      <Box
-        bg={boxBackgroundColor}
-        border={boxBorderColor}
-        borderRadius="2xl"
-        justifyContent="start"
-        py={150}
-        transition="transform 0.3s"
-        _hover={{ transform: "translateY(-5px)" }}
-        cursor="pointer"
-        align="center"
-        m={2}
-      >
-        <ResponsiveContainer>
+export default function Graph() {
+  return (
+    <>
+      <SimpleGrid columns={[1, 1, 2]}>
+        <Box
+          bg={boxBackgroundColor}
+          border={boxBorderColor}
+          borderRadius="2xl"
+          py={18}
+          transition="transform 0.3s"
+          _hover={{ transform: "translateY(-5px)" }}
+          cursor="pointer"
+          align="center"
+          m={2}
+          width={600}
+          height={450}
+        >
+          <Heading size="md">Average Staking Amount</Heading>
           <AreaChart
+            width={500}
+            height={400}
             data={data}
             margin={{
               top: 10,
@@ -109,8 +111,23 @@ export default class Graph extends PureComponent {
               fill="#ffc658"
             />
           </AreaChart>
-        </ResponsiveContainer>
-      </Box>
-    );
-  }
+        </Box>
+        <Box
+          bg={boxBackgroundColor}
+          border={boxBorderColor}
+          borderRadius="2xl"
+          py={18}
+          transition="transform 0.3s"
+          _hover={{ transform: "translateY(-5px)" }}
+          cursor="pointer"
+          align="center"
+          m={2}
+          width={600}
+          height={250}
+        >
+          Github commits
+        </Box>
+      </SimpleGrid>
+    </>
+  );
 }

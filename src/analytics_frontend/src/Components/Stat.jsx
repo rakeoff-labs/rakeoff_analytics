@@ -14,62 +14,62 @@ import { startAnalyticsClient } from "./Client";
 import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
 
 const Stats = () => {
-  const [analyticsObject, setAnalyticsObject] = useState("");
-  const [loaded, setLoaded] = useState(false);
+  // const [analyticsObject, setAnalyticsObject] = useState("");
+  // const [loaded, setLoaded] = useState(false);
 
-  const fetchStats = async () => {
-    const analyticsClient = await startAnalyticsClient();
+  // const fetchStats = async () => {
+  //   const analyticsClient = await startAnalyticsClient();
 
-    const analyticsdata = await analyticsClient.get_rakeoff_analytics();
+  //   const analyticsdata = await analyticsClient.get_rakeoff_analytics();
 
-    setAnalyticsObject(analyticsdata);
-    setLoaded(true);
-  };
+  //   setAnalyticsObject(analyticsdata);
+  //   setLoaded(true);
+  // };
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  // useEffect(() => {
+  //   fetchStats();
+  // }, []);
 
   return (
     <SimpleGrid columns={[2, 1, 4]}>
       <>
         <Box>
           <StoryBoxAndImage
-            heading={
-              loaded
-                ? analyticsObject.icp_fees_collected.toString()
-                : "loading..."
-            }
+            // heading={
+            //   loaded
+            //     ? analyticsObject.icp_fees_collected.toString()
+            //     : "loading..."
+            // }
             info="Fees collected"
           />
         </Box>
         <Box>
           <StoryBoxAndImage
-            heading={
-              loaded
-                ? analyticsObject.icp_fees_collected.toString()
-                : "loading..."
-            }
+            // heading={
+            //   loaded
+            //     ? analyticsObject.icp_fees_collected.toString()
+            //     : "loading..."
+            // }
             info="Total users"
           />
         </Box>
         <Box>
           <StoryBoxAndImage
-            heading={
-              loaded
-                ? analyticsObject.icp_fees_collected.toString()
-                : "loading..."
-            }
+            // heading={
+            //   loaded
+            //     ? analyticsObject.icp_fees_collected.toString()
+            //     : "loading..."
+            // }
             info="Total Staked  USD"
           />
         </Box>
         <Box>
           <StoryBoxAndImage
-            heading={
-              loaded
-                ? analyticsObject.icp_fees_collected.toString()
-                : "loading..."
-            }
+            // heading={
+            //   loaded
+            //     ? analyticsObject.icp_fees_collected.toString()
+            //     : "loading..."
+            // }
             info="Average staking amount"
           />
         </Box>
