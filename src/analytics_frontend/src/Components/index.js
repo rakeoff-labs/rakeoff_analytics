@@ -5,4 +5,4 @@ export { default as MarketPrices } from "./MarketPrices";
 export { default as Footer } from "./Footer";
 export { default as Stat } from "./Stat";
 export { default as Graph } from "./Graph";
-export { default as Transactions } from "./Transactions";
+export { default as Article } from "./Article";

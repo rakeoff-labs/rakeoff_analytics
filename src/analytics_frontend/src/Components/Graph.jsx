@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Octokit } from "octokit";
+
 import {
   AreaChart,
   Area,
@@ -57,6 +59,30 @@ const data = [
 ];
 
 export default function Graph() {
+  const Githubfetch = async () => {
+    const token = process.env.REACT_APP_GITHUB_TOKEN;
+
+    const url = "https://api.github.com/repos/rakeoff-labs/rakeoff/commits";
+
+    const options = {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    };
+
+    fetch(url, options)
+      .then((response) => response.json())
+      .then((commits) => {
+        // Process and send data to frontend
+        console.log(commits);
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+
+  useEffect(() => {
+    Githubfetch();
+  }, []);
+
   return (
     <>
       <SimpleGrid columns={[1, 1, 2]}>
@@ -125,7 +151,7 @@ export default function Graph() {
           width={600}
           height={250}
         >
-          Github commits
+          <Heading size="md">Github commits</Heading>
         </Box>
       </SimpleGrid>
     </>
