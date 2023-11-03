@@ -16,8 +16,6 @@ const App = () => {
       <Sidebar />
       <Box ml="5">
         <Banner />
-
-        <MarketPrices />
         <Stat />
         <Graph />
         <Boxstat />

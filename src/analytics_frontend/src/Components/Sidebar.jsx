@@ -10,16 +10,25 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
-  Center,
+  Link,
 } from "@chakra-ui/react";
+import {
+  FiHome,
+  FiTrendingUp,
+  FiCompass,
+  FiStar,
+  FiSettings,
+  FiMenu,
+} from "react-icons/fi";
 import { WarningIcon } from "@chakra-ui/icons";
 import logo from "../../assets/logo.svg";
+import footer from "../../assets/footer.svg";
 
 const LinkItems = [
-  { name: "Overview" },
-  { name: "Reports" },
-  { name: "Fees/Revenue" },
-  { name: "Token usage" },
+  { name: "Overview", icon: FiHome },
+  { name: "Reports", icon: FiTrendingUp },
+  { name: "Fees/Revenue", icon: FiCompass },
+  { name: "Token usage", icon: FiSettings },
 ];
 
 export default function Sidebar() {
@@ -63,9 +72,9 @@ const SidebarContent = (props) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Center>
-          <Image src={logo} mt={4} h="70px" w="auto" alt="Rakeoff logo" />
-        </Center>
+        <Link href="https://app.rakeoff.io/" isExternal>
+          <Image src={footer} m={2} mb={2} w="100%" alt="Rakeoff logo" />
+        </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -94,7 +103,7 @@ const NavItem = (props) => {
         borderRadius="lg"
         role="group"
         cursor="pointer"
-        _hover={{ bg: "cyan.400", color: "white" }}
+        _hover={{ bg: "#6229a8", color: "white" }}
         {...rest}
       >
         {icon && (
