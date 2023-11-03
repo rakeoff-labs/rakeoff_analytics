@@ -10,6 +10,7 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
+  Center,
 } from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import logo from "../../assets/logo.svg";
@@ -62,7 +63,9 @@ const SidebarContent = (props) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Image src={logo} mt={4} h="70px" w="auto" alt="Rakeoff logo" />
+        <Center>
+          <Image src={logo} mt={4} h="70px" w="auto" alt="Rakeoff logo" />
+        </Center>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (

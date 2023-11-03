@@ -24,7 +24,7 @@ const MarketPrices = () => {
   }, []);
 
   return (
-    <Container maxW="7xl" mt={{ base: 12, md: "5rem" }} p={0}>
+    <Container maxW="7xl" mt={{ base: 12 }} p={0}>
       <Box>
         <Text>ICP price:$ {icpPrice}</Text>
       </Box>
