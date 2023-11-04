@@ -7,7 +7,12 @@ import {
   SimpleGrid,
   Flex,
 } from "@chakra-ui/react";
-import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
+import {
+  RakeoffRed,
+  boxBackgroundColor,
+  boxBorderColor,
+  boxFontColor,
+} from "./colors";
 
 const Boxstat = () => {
   return (
@@ -27,7 +32,6 @@ const Boxstat = () => {
         justify="space-between"
         mt={{ base: 3, md: 1 }}
         p={{ base: 3, md: 0 }}
-        // p={3}
       >
         <Smallbox heading={"Hello"} />
         <Smallbox heading={"Hello"} />
@@ -62,7 +66,7 @@ const Boxcomponent = ({ heading }) => {
 const Smallbox = ({ heading }) => {
   return (
     <Box
-      bg={boxBackgroundColor}
+      bgGradient={`linear(to-br, ${boxBackgroundColor}, purple.500, #6229a8)`}
       border={boxBorderColor}
       borderRadius="2xl"
       py={18}

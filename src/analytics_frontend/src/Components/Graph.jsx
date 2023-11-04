@@ -9,7 +9,12 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
+import {
+  RakeoffRed,
+  boxBackgroundColor,
+  boxBorderColor,
+  boxFontColor,
+} from "./colors";
 
 import { Box, Container, Heading, SimpleGrid, Center } from "@chakra-ui/react";
 
@@ -174,7 +179,7 @@ export default function Graph() {
           </Box>
           <Box gridArea="Othergraph">
             <Box
-              bg={boxBackgroundColor}
+              bgGradient={`linear(to-b, ${boxBackgroundColor}, purple.500, #6229a8)`}
               border={boxBorderColor}
               borderRadius="2xl"
               py={18}

@@ -8,7 +8,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { startAnalyticsClient } from "./Client";
-import { boxBackgroundColor, boxBorderColor, boxFontColor } from "./colors";
+import {
+  RakeoffRed,
+  boxBackgroundColor,
+  boxBorderColor,
+  boxFontColor,
+} from "./colors";
 
 const Stats = () => {
   // const [analyticsObject, setAnalyticsObject] = useState("");
@@ -49,7 +54,7 @@ export default Stats;
 const StoryBoxAndImage = ({ heading, info }) => {
   return (
     <Box
-      bg={boxBackgroundColor}
+      bgGradient={`linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`}
       border={boxBorderColor}
       borderRadius="2xl"
       py={18}

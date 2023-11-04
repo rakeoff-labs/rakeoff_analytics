@@ -14,7 +14,7 @@ export default function Medium() {
         src="https://widgets.sociablekit.com/medium-publication-feed/iframe/219005"
         allowFullScreen
         width="100%"
-        height="315px"
+        height="326px"
       ></iframe>
     </Container>
   );
