@@ -7,6 +7,7 @@ import {
   Footer,
   Stat,
   Graph,
+  Medium,
   Boxstat,
 } from "./Components";
 
@@ -19,6 +20,7 @@ const App = () => {
         <Stat />
         <Graph />
         <Boxstat />
+        <Medium />
         <Footer />
       </Box>
     </Flex>

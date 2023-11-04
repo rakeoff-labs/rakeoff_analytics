@@ -5,3 +5,4 @@ export { default as Footer } from "./Footer";
 export { default as Stat } from "./Stat";
 export { default as Boxstat } from "./Boxstat";
 export { default as Graph } from "./Graph";
+export { default as Medium } from "./Medium";

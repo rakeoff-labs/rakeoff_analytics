@@ -93,17 +93,15 @@ export default function Graph() {
           mx={{ base: 3, md: 3, lg: 0 }}
           w="100%"
           templateAreas={[
-            `"allInfo"
-            "WhatIsStaking"
-            "HowDoIEarnRewards"
-            "ckbtcIntegration"`,
+            `"AverageStaking"
+            "Githubcommits"
+            "Othergraph"`,
             null,
-            `"allInfo WhatIsStaking"
-            "allInfo HowDoIEarnRewards"
-            "allInfo ckbtcIntegration"`,
+            `"AverageStaking Githubcommits"
+            "AverageStaking Othergraph"`,
           ]}
         >
-          <Box gridArea="allInfo">
+          <Box gridArea="AverageStaking">
             <Box
               bg={boxBackgroundColor}
               border={boxBorderColor}
@@ -157,7 +155,7 @@ export default function Graph() {
               </AreaChart>
             </Box>
           </Box>
-          <Box gridArea="WhatIsStaking">
+          <Box gridArea="Githubcommits">
             <Box
               bg={boxBackgroundColor}
               border={boxBorderColor}
@@ -174,7 +172,7 @@ export default function Graph() {
               <Heading size="md">Github commits</Heading>
             </Box>
           </Box>
-          <Box gridArea="HowDoIEarnRewards">
+          <Box gridArea="Othergraph">
             <Box
               bg={boxBackgroundColor}
               border={boxBorderColor}
