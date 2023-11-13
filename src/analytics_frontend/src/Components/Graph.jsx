@@ -1,20 +1,6 @@
-import React, { useEffect } from "react";
-import { Octokit } from "octokit";
-
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
-import {
-  RakeoffRed,
-  boxBackgroundColor,
-  boxBorderColor,
-  boxFontColor,
-} from "./colors";
+import React, { useEffect, useState } from "react";
+import { AreaChart, Area, XAxis, YAxis, LineChart, Line } from "recharts";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
 
 import { Box, Container, Heading, SimpleGrid, Center } from "@chakra-ui/react";
 
@@ -64,28 +50,63 @@ const data = [
 ];
 
 export default function Graph() {
-  const Githubfetch = async () => {
+  const GraphQl = async () => {
+    const query = `
+  query ($orgName: String!, $repoName: String!) {
+      repository(owner: $orgName, name: $repoName) {
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history {
+                totalCount
+                edges {
+                  node {
+                    committedDate
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
     const token = process.env.REACT_APP_GITHUB_TOKEN;
-
-    const url =
-      "https://api.github.com/repos/rakeoff-labs/rakeoff/commits?per_page=100";
-
-    const options = {
-      headers: {
-        Authorization: `token ${token}`,
-      },
+    const variables = {
+      orgName: "rakeoff-labs",
+      repoName: "rakeoff",
     };
 
-    fetch(url, options)
-      .then((response) => response.json())
-      .then((commits) => {
-        console.log(commits);
-      })
-      .catch((error) => console.error("Error:", error));
+    const body = {
+      query,
+      variables,
+    };
+    const res = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const gitHub = await res.json();
+
+    const history = gitHub.data.repository.defaultBranchRef.target.history;
+    console.log(history);
+    return history;
   };
+  const [totalCommits, setTotalCommits] = useState(0);
+  const [detailCommit, setDetailCommit] = useState([]);
 
   useEffect(() => {
-    Githubfetch();
+    GraphQl()
+      .then((history) => {
+        setTotalCommits(history.totalCount);
+        setDetailCommit(history.edges);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (
@@ -132,10 +153,9 @@ export default function Graph() {
                   bottom: 0,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip />
+
                 <Area
                   type="monotone"
                   dataKey="uv"
@@ -161,41 +181,45 @@ export default function Graph() {
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
-            <Box
-              bg={boxBackgroundColor}
-              border={boxBorderColor}
-              borderRadius="2xl"
-              py={18}
-              transition="transform 0.3s"
-              _hover={{ transform: "translateY(-5px)" }}
-              cursor="pointer"
-              align="center"
-              m={2}
-              height={250}
-              w={{ base: "550px", md: "400px", lg: "600px" }}
-            >
-              <Heading size="md">Github commits</Heading>
-            </Box>
+            <BoxLayout>
+              <Heading size="sm">dApp commits so far: {totalCommits}</Heading>
+
+              <LineChart width={540} height={200} data={data}>
+                <XAxis dataKey="name" />
+                <YAxis />
+
+                <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+              </LineChart>
+            </BoxLayout>
           </Box>
           <Box gridArea="Othergraph">
-            <Box
-              bgGradient={`linear(to-b, ${boxBackgroundColor}, purple.500, #6229a8)`}
-              border={boxBorderColor}
-              borderRadius="2xl"
-              py={18}
-              transition="transform 0.3s"
-              _hover={{ transform: "translateY(-5px)" }}
-              cursor="pointer"
-              align="center"
-              m={2}
-              height={250}
-              w={{ base: "550px", md: "400px", lg: "600px" }}
-            >
-              <Heading size="md">Github commits</Heading>
-            </Box>
+            <BoxLayout heading={"Github"} />
           </Box>
         </SimpleGrid>
       </Center>
     </Container>
   );
 }
+
+const BoxLayout = ({ children }) => {
+  return (
+    <Box
+      // bgGradient={`linear(to-b, ${boxBackgroundColor}, purple.500, #6229a8)`}
+      border={boxBorderColor}
+      bg={boxBackgroundColor}
+      borderRadius="2xl"
+      py={18}
+      transition="transform 0.3s"
+      _hover={{ transform: "translateY(-5px)" }}
+      cursor="pointer"
+      align="center"
+      m={2}
+      height={250}
+      w={{ base: "550px", md: "400px", lg: "600px" }}
+    >
+      {/* <Heading size="md">{heading}</Heading> */}
+      {children}
+    </Box>
+  );
+};

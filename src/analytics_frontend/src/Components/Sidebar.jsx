@@ -12,16 +12,10 @@ import {
   useDisclosure,
   Link,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
+import { FiHome, FiTrendingUp, FiCompass, FiSettings } from "react-icons/fi";
 import { WarningIcon } from "@chakra-ui/icons";
-import logo from "../../assets/logo.svg";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
+
 import footer from "../../assets/footer.svg";
 
 const LinkItems = [
@@ -103,7 +97,9 @@ const NavItem = (props) => {
         borderRadius="lg"
         role="group"
         cursor="pointer"
-        _hover={{ bg: "#6229a8", color: "white" }}
+        _hover={{
+          bgGradient: `linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`,
+        }}
         {...rest}
       >
         {icon && (

@@ -8,12 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { startAnalyticsClient } from "./Client";
-import {
-  RakeoffRed,
-  boxBackgroundColor,
-  boxBorderColor,
-  boxFontColor,
-} from "./colors";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
 
 const Stats = () => {
   // const [analyticsObject, setAnalyticsObject] = useState("");

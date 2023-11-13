@@ -1,18 +1,6 @@
 import React from "react";
-import {
-  Box,
-  Container,
-  Text,
-  Heading,
-  SimpleGrid,
-  Flex,
-} from "@chakra-ui/react";
-import {
-  RakeoffRed,
-  boxBackgroundColor,
-  boxBorderColor,
-  boxFontColor,
-} from "./colors";
+import { Box, Container, Heading, SimpleGrid, Flex } from "@chakra-ui/react";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
 
 const Boxstat = () => {
   return (
