@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Container, Heading, SimpleGrid, Flex } from "@chakra-ui/react";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
 
-const Boxstat = () => {
+const BottomStat = () => {
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
       <SimpleGrid
@@ -14,8 +14,7 @@ const Boxstat = () => {
         <Boxcomponent heading={"HELLO"} />
         <Boxcomponent heading={"HELLO"} />
       </SimpleGrid>
-      <Flex
-        alignItems="center"
+      {/* <Flex
         direction={["column", "column", "row"]}
         justify="space-between"
         mt={{ base: 3, md: 1 }}
@@ -25,9 +24,20 @@ const Boxstat = () => {
         <Smallbox heading={"Hello"} />
 
         <Flex>
-          <Boxcomponent heading={"Stat"} />
+          <Smallbox heading={"Hello"} />
         </Flex>
-      </Flex>
+      </Flex> */}
+      <SimpleGrid
+        gap={3}
+        columns={[2, 1, 4]}
+        spacing={{ base: 3, md: 4 }}
+        mx={{ base: 3, md: 3, lg: 0 }}
+      >
+        <Boxcomponent heading={"HELLO"} />
+        <Boxcomponent heading={"HELLO"} />
+        <Boxcomponent heading={"HELLO"} />
+        <Boxcomponent heading={"HELLO"} />
+      </SimpleGrid>
     </Container>
   );
 };
@@ -43,7 +53,7 @@ const Boxcomponent = ({ heading }) => {
       _hover={{ transform: "translateY(-5px)" }}
       cursor="pointer"
       align="center"
-      w={{ base: "550px", md: "400px", lg: "600px" }}
+      w={{ base: "100%", md: "400px", lg: "100%" }}
       m={2}
     >
       <Heading> {heading}</Heading>
@@ -62,7 +72,7 @@ const Smallbox = ({ heading }) => {
       _hover={{ transform: "translateY(-5px)" }}
       cursor="pointer"
       align="center"
-      w={{ base: "550px", md: "400px", lg: "285px" }}
+      w={{ base: "550px", md: "400px", lg: "550px" }}
       m={2}
     >
       <Heading>{heading}</Heading>
@@ -70,4 +80,4 @@ const Smallbox = ({ heading }) => {
   );
 };
 
-export default Boxstat;
+export default BottomStat;

@@ -9,8 +9,10 @@ const Banner = () => {
       bgGradient="linear(to-b, purple.800, white.300)"
       p={0}
     >
-      <Box align="start" m={3} mb={4}>
-        <Heading>Rakeoff Analytics</Heading>
+      <Box align="start" m={{ base: 6, md: 3 }}>
+        <Heading size="2xl" mb={8}>
+          Rakeoff Analytics
+        </Heading>
       </Box>
     </Container>
   );

@@ -1,29 +1,24 @@
 import React from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import {
-  Sidebar,
   Banner,
-  MarketPrices,
   Footer,
-  Stat,
+  Topstat,
   Graph,
-  Medium,
-  Boxstat,
+  Navbar,
+  BottomStat,
 } from "./Components";
 
 const App = () => {
   return (
-    <Flex>
-      <Sidebar />
-      <Box ml="5">
-        <Banner />
-        <Stat />
-        <Graph />
-        <Boxstat />
-        <Medium />
-        <Footer />
-      </Box>
-    </Flex>
+    <Box>
+      <Navbar />
+      <Banner />
+      <Topstat />
+      <Graph />
+      <BottomStat />
+      <Footer />
+    </Box>
   );
 };
 

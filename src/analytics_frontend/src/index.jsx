@@ -1,12 +1,10 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-
 import App from "./App";
-
+import { extendTheme, ChakraProvider } from "@chakra-ui/react";
+import React from "react";
 const container = document.getElementById("app");
 const root = createRoot(container);
-
+export const boxBackgroundColor = "#292e40";
 const theme = extendTheme({
   config: {
     initialColorMode: "dark",
@@ -14,7 +12,9 @@ const theme = extendTheme({
   },
   styles: {
     global: {
-      body: {},
+      body: {
+        bgGradient: `linear(to-b, ${boxBackgroundColor}, purple.500, #6229a8)`,
+      },
     },
   },
 });

@@ -1,13 +1,6 @@
 {
   "canisters": {
-    "analytics_backend": {
-      "main": "src/analytics_backend/RakeoffAnalytics.mo",
-      "type": "motoko"
-    },
     "analytics_frontend": {
-      "dependencies": [
-        "analytics_backend"
-      ],
       "frontend": {
         "entrypoint": "src/analytics_frontend/src/index.html"
       },
