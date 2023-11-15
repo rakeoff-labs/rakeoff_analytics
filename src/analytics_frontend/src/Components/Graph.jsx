@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  AreaChart,
-  Area,
+  BarChart,
   XAxis,
+  Bar,
   YAxis,
   LineChart,
   Line,
   Tooltip,
 } from "recharts";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
+import { getRakeoffStats, icpToDollars } from "./tools";
 
 import {
   Box,
@@ -65,6 +66,45 @@ const data = [
 ];
 
 export default function Graph() {
+  const [graphData, setGraphData] = useState([]);
+
+  const getGraphData = async () => {
+    const getGraph = await getRakeoffStats();
+
+    const dataPromises = getGraph.pool_history_chart_data.map(async (item) => {
+      const date = new Date(item.timestamp / 1000000); // Convert nanoseconds to milliseconds
+      const usdAmount = await icpToDollars(item.amount);
+      return {
+        date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, // Format the date
+        amount: usdAmount,
+      };
+    });
+
+    const formattedData = await Promise.all(dataPromises); // Resolve all promises
+
+    const aggregateDataByMonth = (data) => {
+      const aggregatedData = {};
+
+      data.forEach((item) => {
+        const monthKey = item.date; // Assuming item.date is already in the format 'YYYY-MM-DD'
+        if (!aggregatedData[monthKey]) {
+          aggregatedData[monthKey] = { ...item };
+        } else {
+          aggregatedData[monthKey].amount += item.amount;
+        }
+      });
+
+      return Object.values(aggregatedData);
+    };
+
+    const aggregatedData = aggregateDataByMonth(formattedData); // Use the resolved data
+    setGraphData(aggregatedData); // Update state with aggregated data
+  };
+
+  useEffect(() => {
+    getGraphData();
+  }, []);
+
   const GraphQl = async () => {
     const query = `
   query ($orgName: String!, $repoName: String!) {
@@ -185,15 +225,15 @@ export default function Graph() {
           mx={{ base: 3, md: 3, lg: 0 }}
           w="100%"
           templateAreas={[
-            `"AverageStaking"
+            `"Poolhistory"
             "Githubcommits"
             "Othergraph"`,
             null,
-            `"AverageStaking Githubcommits"
-            "AverageStaking Othergraph"`,
+            `"Poolhistory Githubcommits"
+            "Poolhistory Othergraph"`,
           ]}
         >
-          <Box gridArea="AverageStaking">
+          <Box gridArea="Poolhistory">
             <Box
               bg={boxBackgroundColor}
               border={boxBorderColor}
@@ -207,44 +247,17 @@ export default function Graph() {
               w={{ base: "400px", md: "400px", lg: "100%" }}
               height={530}
             >
-              <Heading size="md">Average Staking Amount</Heading>
-              <AreaChart
+              <Heading size="md">Pool history</Heading>
+              <BarChart
                 width={isDesktop ? 580 : 400}
                 height={450}
-                data={data}
-                margin={{
-                  top: 10,
-                  right: 50,
-                  left: 0,
-                  bottom: 0,
-                }}
-                p={2}
+                data={graphData}
+                margin={{ top: 10, right: 50, left: 0, bottom: 0 }}
               >
-                <XAxis dataKey="name" />
+                <XAxis dataKey="date" />
                 <YAxis />
-
-                <Area
-                  type="monotone"
-                  dataKey="uv"
-                  stackId="1"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="pv"
-                  stackId="1"
-                  stroke="#82ca9d"
-                  fill="#82ca9d"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="amt"
-                  stackId="1"
-                  stroke="#ffc658"
-                  fill="#ffc658"
-                />
-              </AreaChart>
+                <Bar dataKey="amount" fill="#8884d8" />
+              </BarChart>
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
@@ -253,7 +266,7 @@ export default function Graph() {
               <Center>
                 <LineChart
                   mb={4}
-                  width={isDesktop ? 680 : 480}
+                  width={isDesktop ? 680 : 420}
                   height={200}
                   data={chartData}
                   align="center"
