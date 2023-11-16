@@ -8,12 +8,6 @@ import {
   Line,
   Tooltip,
 } from "recharts";
-import { boxBackgroundColor, boxBorderColor } from "./colors";
-import { getRakeoffStats, icpToDollars } from "./tools";
-import IcLogo from "../../assets/ic-logo.png";
-import ckbtc_logo from "../../assets/ckbtc_logo.png";
-import ethereum_logo from "../../assets/ethereum_logo.png";
-
 import {
   Box,
   Container,
@@ -21,62 +15,93 @@ import {
   SimpleGrid,
   useBreakpointValue,
   Center,
-  StatNumber,
   Stat,
   StatHelpText,
   Text,
   Flex,
   StatArrow,
-  useColorMode,
   Image as ChakraImage,
 } from "@chakra-ui/react";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
+import { getRakeoffStats, icpToDollars } from "./tools";
+import IcLogo from "../../assets/ic-logo.png";
+import ckbtc_logo from "../../assets/ckbtc_logo.png";
+import ethereum_logo from "../../assets/ethereum_logo.png";
 
 export default function Graph() {
-  const { colorMode } = useColorMode();
+  // RAKEOFF API ///
+  /////////////////
   const [graphData, setGraphData] = useState([]);
+  const monthNamespool = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const getGraphData = async () => {
     const getGraph = await getRakeoffStats();
-
+    // filtering though the history using map
     const dataPromises = getGraph.pool_history_chart_data.map(async (item) => {
-      const date = new Date(item.timestamp / 1000000); // Convert nanoseconds to milliseconds
-      const usdAmount = await icpToDollars(item.amount);
+      const date = new Date(item.timestamp / 1000000);
+      const monthYear = monthNamespool[date.getMonth()];
+      let usdAmount = await icpToDollars(item.amount); // Convert to USD
+
+      // Convert the formatted currency string to a number
+      usdAmount = Number(usdAmount.replace(/[^0-9.-]+/g, ""));
+
+      const numDigits = Math.ceil(Math.log10(usdAmount + 1));
+      //rounding to show two digit
+      const totalAmount = Math.floor(usdAmount / Math.pow(10, numDigits - 2));
+
+      console.log(totalAmount);
+
       return {
-        date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, // Format the date
-        amount: usdAmount,
+        date: monthYear,
+        amount: totalAmount,
       };
     });
+    const formattedData = await Promise.all(dataPromises);
 
-    const formattedData = await Promise.all(dataPromises); // Resolve all promises
+    // Showing several months since we dont have all the history
+    const allMonths = ["Nov", "Dec", "Jan", "Feb", "Mar"];
+    const baseData = allMonths.map((month) => ({ date: month, amount: "$0" }));
 
-    const aggregateDataByMonth = (data) => {
-      const aggregatedData = {};
+    // Merge actual data with base data
+    const mergedData = baseData.map((baseItem) => {
+      const actualItem = formattedData.find(
+        (item) => item.date === baseItem.date
+      );
+      return actualItem || baseItem;
+    });
 
-      data.forEach((item) => {
-        const monthKey = item.date; // Assuming item.date is already in the format 'YYYY-MM-DD'
-        if (!aggregatedData[monthKey]) {
-          aggregatedData[monthKey] = { ...item };
-        } else {
-          aggregatedData[monthKey].amount += item.amount;
-        }
-      });
-
-      return Object.values(aggregatedData);
-    };
-
-    const aggregatedData = aggregateDataByMonth(formattedData); // Use the resolved data
-    setGraphData(aggregatedData); // Update state with aggregated data
+    setGraphData(mergedData);
   };
 
   useEffect(() => {
     getGraphData();
-  }, []);
+  }, []); //
+
+  // ICP price API /////
+  /////////////////
+
+  // Storing the change in price
 
   const [icpPrice, setIcpPrice] = useState(0);
+  // Storing the change in pentage of price in last 24 hours
   const [icpPercentChange, setIcpPercentChange] = useState(0);
 
   useEffect(() => {
     fetch(
+      // 900 seconds = 15 mins
       "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
     )
       .then((response) => {
@@ -86,8 +111,11 @@ export default function Graph() {
         return response.json();
       })
       .then((data) => {
+        // Gets price every 15 mins, 4 intervals each hour
         const price = data[0][4];
+        // Gets 4 * 24 is 96, each hour has 4 intervals
         const price24Ago = data[96][4];
+        // Getting average * by 100 for percentage
         const percentageChange = ((price - price24Ago) / price24Ago) * 100;
         setIcpPrice(price);
         setIcpPercentChange(percentageChange);
@@ -97,8 +125,14 @@ export default function Graph() {
       });
   }, []);
 
+  // changes to red if change less than 0, else stays green ///
+  /////////////////
+
   const icpStrokeColor = icpPercentChange > 0 ? "#38A169" : "#E53E3E";
-  const arrowType = icpPercentChange > 0 ? "increase" : "decrease";
+  const icparrowType = icpPercentChange > 0 ? "increase" : "decrease";
+
+  // BTC price API //////
+  /////////////////
 
   const [btcPrice, setBtcPrice] = useState(0);
   const [btcPercentChange, setBtcPercentChange] = useState(0);
@@ -128,6 +162,9 @@ export default function Graph() {
   const btcStrokeColor = btcPercentChange > 0 ? "#38A169" : "#E53E3E";
   const btcarrowType = btcPercentChange > 0 ? "increase" : "decrease";
 
+  // ETH price API //////
+  /////////////////
+
   const [ethPrice, setEthPrice] = useState(0);
   const [ethPercentChange, setEthPercentChange] = useState(0);
 
@@ -155,6 +192,9 @@ export default function Graph() {
 
   const ethStrokeColor = ethPercentChange > 0 ? "#38A169" : "#E53E3E";
   const etharrowType = ethPercentChange > 0 ? "increase" : "decrease";
+
+  // GITHUB API ///
+  /////////////////
 
   const GraphQl = async () => {
     const query = `
@@ -230,6 +270,8 @@ export default function Graph() {
     "Dec",
   ];
 
+  // Aggregates commits each month///
+  /////////////////
   const aggregateCommitsByMonth = (edges, monthNames) => {
     const commitCountsByMonth = {};
 
@@ -244,12 +286,15 @@ export default function Graph() {
       commitCountsByMonth[yearMonth]++;
     });
 
-    return Object.keys(commitCountsByMonth)
-      .map((month) => ({
-        month,
-        commits: commitCountsByMonth[month],
-      }))
-      .reverse();
+    return (
+      Object.keys(commitCountsByMonth)
+        // maps to check the months of commits
+        .map((month) => ({
+          month,
+          commits: commitCountsByMonth[month],
+        }))
+        .reverse()
+    );
   };
 
   useEffect(() => {
@@ -261,8 +306,6 @@ export default function Graph() {
       setChartData(processedChartData);
     }
   }, [detailCommit]);
-
-  // const chartData = monthNames[aggregateCommitsByMonth(detailCommit)];
 
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
@@ -298,7 +341,7 @@ export default function Graph() {
               w={{ base: "400px", md: "400px", lg: "100%" }}
               height={530}
             >
-              <Heading size="md">Pool history</Heading>
+              <Heading size="md">Pool history winner amount $</Heading>
               <BarChart
                 width={isDesktop ? 580 : 400}
                 height={450}
@@ -307,16 +350,17 @@ export default function Graph() {
               >
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Bar dataKey="amount" fill="#8884d8" />
+                <Bar dataKey="amount" fill="#8a2be2" barSize={50} /> //blue
+                violet either
               </BarChart>
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
-            <BoxLayout heading={"dapp commits: " + totalCommits}>
+            <BoxLayout heading={"dApp commits: " + totalCommits}>
               <Center>
                 <LineChart
                   mb={4}
-                  width={isDesktop ? 680 : 420}
+                  width={isDesktop ? 680 : 415} // anything greater pushes the mobile off
                   height={200}
                   data={chartData}
                   align="center"
@@ -344,14 +388,14 @@ export default function Graph() {
                   colorSrc="white"
                   StrokeColor={icpStrokeColor}
                   imgSrc={IcLogo}
-                  arrowType={arrowType}
+                  arrowType={icparrowType}
                   Percentagechange={icpPercentChange.toFixed(2)}
                   market="ICP"
                 />
                 <Marketbox
                   StrokeColor={btcStrokeColor}
                   price={btcPrice.toFixed(0)}
-                  market="BTC"
+                  market="ckBTC"
                   imgSrc={ckbtc_logo}
                   arrowType={btcarrowType}
                   Percentagechange={btcPercentChange.toFixed(2)}
@@ -404,6 +448,8 @@ const Marketbox = ({
   imgSrc,
   colorSrc,
   market,
+  mb,
+  h,
 }) => {
   return (
     <Box
@@ -432,10 +478,10 @@ const Marketbox = ({
       </Flex>
       <Stat>
         <Heading
-          size={{ base: "lg", lg: "lg" }}
+          size={{ base: "sm", lg: "lg" }}
           textAlign="center"
-          m={3}
-          mb={3}
+          m={1}
+          mt={3}
           color="white"
         >
           ${price}

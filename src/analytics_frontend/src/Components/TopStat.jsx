@@ -12,6 +12,9 @@ import { boxBackgroundColor, boxBorderColor } from "./colors";
 import { getRakeoffStats, icpToDollars, e8sToIcp } from "./tools";
 
 const Topstat = () => {
+  // RAKEOFF API //////
+  /////////////////
+
   const [icpStakers, setIcpStakers] = useState(0);
 
   const [claimedAchiev, setClaimedAchiev] = useState(0);

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container, SimpleGrid } from "@chakra-ui/react";
-
 import { getRakeoffStats, icpToDollars } from "./tools";
 import { StoryBoxAndImage } from "./TopStat";
 
