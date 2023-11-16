@@ -5,9 +5,11 @@ import {
   Stack,
   useColorModeValue,
   Image as ChakraImage,
+  Center,
   Flex,
+  Heading,
 } from "@chakra-ui/react";
-import footer from "../../assets/footer.svg";
+import logowhitepurple from "../../assets/rakeoff_logo_name_white_purple.svg";
 import githubwhite from "../../assets/github_white.png";
 import twitterwhite from "../../assets/twitter_white.png";
 import discordwhite from "../../assets/discord_white.png";
@@ -16,12 +18,12 @@ import { Icon } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
-    <Container maxW="7xl" mt={{ base: 12, md: "5rem" }} p={0}>
+    <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
       <Box
         borderTopWidth={1}
         borderStyle={"solid"}
         borderColor={useColorModeValue("gray.200", "gray.700")}
-        mt={{ base: 12, md: "5rem" }}
+        mt={{ base: 3, md: 1 }}
       >
         <Container
           as={Stack}
@@ -36,9 +38,9 @@ const Footer = () => {
             <ChakraImage
               alt="rakeoff logo"
               w="auto"
-              h={45}
+              h={35}
               objectFit="contain"
-              src={footer}
+              src={logowhitepurple}
             />
             <Box ml={2} color="white" fontSize="md">
               crew@rakeoff.io
