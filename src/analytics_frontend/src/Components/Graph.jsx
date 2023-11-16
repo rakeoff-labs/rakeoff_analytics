@@ -10,6 +10,9 @@ import {
 } from "recharts";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
 import { getRakeoffStats, icpToDollars } from "./tools";
+import IcLogo from "../../assets/ic-logo.png";
+import ckbtc_logo from "../../assets/ckbtc_logo.png";
+import ethereum_logo from "../../assets/ethereum_logo.png";
 
 import {
   Box,
@@ -18,54 +21,18 @@ import {
   SimpleGrid,
   useBreakpointValue,
   Center,
+  StatNumber,
+  Stat,
+  StatHelpText,
+  Text,
+  Flex,
+  StatArrow,
+  useColorMode,
+  Image as ChakraImage,
 } from "@chakra-ui/react";
 
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
-
 export default function Graph() {
+  const { colorMode } = useColorMode();
   const [graphData, setGraphData] = useState([]);
 
   const getGraphData = async () => {
@@ -104,6 +71,90 @@ export default function Graph() {
   useEffect(() => {
     getGraphData();
   }, []);
+
+  const [icpPrice, setIcpPrice] = useState(0);
+  const [icpPercentChange, setIcpPercentChange] = useState(0);
+
+  useEffect(() => {
+    fetch(
+      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("We gots an error");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const price = data[0][4];
+        const price24Ago = data[96][4];
+        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
+        setIcpPrice(price);
+        setIcpPercentChange(percentageChange);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  }, []);
+
+  const icpStrokeColor = icpPercentChange > 0 ? "#38A169" : "#E53E3E";
+  const arrowType = icpPercentChange > 0 ? "increase" : "decrease";
+
+  const [btcPrice, setBtcPrice] = useState(0);
+  const [btcPercentChange, setBtcPercentChange] = useState(0);
+
+  useEffect(() => {
+    fetch(
+      "https://api.pro.coinbase.com/products/BTC-USD/candles?granularity=900"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("We gots an error");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const price = data[0][4];
+        const price24Ago = data[96][4];
+        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
+        setBtcPrice(price);
+        setBtcPercentChange(percentageChange);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  }, []);
+
+  const btcStrokeColor = btcPercentChange > 0 ? "#38A169" : "#E53E3E";
+  const btcarrowType = btcPercentChange > 0 ? "increase" : "decrease";
+
+  const [ethPrice, setEthPrice] = useState(0);
+  const [ethPercentChange, setEthPercentChange] = useState(0);
+
+  useEffect(() => {
+    fetch(
+      "https://api.pro.coinbase.com/products/ETH-USD/candles?granularity=900"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("We gots an error");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const price = data[0][4];
+        const price24Ago = data[96][4];
+        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
+        setEthPrice(price);
+        setEthPercentChange(percentageChange);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  }, []);
+
+  const ethStrokeColor = ethPercentChange > 0 ? "#38A169" : "#E53E3E";
+  const etharrowType = ethPercentChange > 0 ? "increase" : "decrease";
 
   const GraphQl = async () => {
     const query = `
@@ -261,8 +312,7 @@ export default function Graph() {
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
-            <BoxLayout>
-              <Heading size="md">dApp commits : {totalCommits}</Heading>
+            <BoxLayout heading={"dapp commits: " + totalCommits}>
               <Center>
                 <LineChart
                   mb={4}
@@ -287,7 +337,35 @@ export default function Graph() {
             </BoxLayout>
           </Box>
           <Box gridArea="Othergraph">
-            <BoxLayout heading={"Github"} />
+            <BoxLayout heading="Marketprices">
+              <SimpleGrid columns={3} gap={3}>
+                <Marketbox
+                  price={icpPrice.toFixed(2)}
+                  colorSrc="white"
+                  StrokeColor={icpStrokeColor}
+                  imgSrc={IcLogo}
+                  arrowType={arrowType}
+                  Percentagechange={icpPercentChange.toFixed(2)}
+                  market="ICP"
+                />
+                <Marketbox
+                  StrokeColor={btcStrokeColor}
+                  price={btcPrice.toFixed(0)}
+                  market="BTC"
+                  imgSrc={ckbtc_logo}
+                  arrowType={btcarrowType}
+                  Percentagechange={btcPercentChange.toFixed(2)}
+                />
+                <Marketbox
+                  StrokeColor={ethStrokeColor}
+                  price={ethPrice.toFixed(0)}
+                  market="ETH"
+                  imgSrc={ethereum_logo}
+                  arrowType={etharrowType}
+                  Percentagechange={ethPercentChange.toFixed(2)}
+                />
+              </SimpleGrid>
+            </BoxLayout>
           </Box>
         </SimpleGrid>
       </Center>
@@ -295,10 +373,9 @@ export default function Graph() {
   );
 }
 
-const BoxLayout = ({ isDesktop, children }) => {
+const BoxLayout = ({ isDesktop, heading, children }) => {
   return (
     <Box
-      // bgGradient={`linear(to-b, ${boxBackgroundColor}, purple.500, #6229a8)`}
       border={boxBorderColor}
       bg={boxBackgroundColor}
       borderRadius="2xl"
@@ -312,8 +389,63 @@ const BoxLayout = ({ isDesktop, children }) => {
       height={250}
       w={isDesktop ? 300 : "100%"}
     >
-      {/* <Heading size="md">{heading}</Heading> */}
+      <Heading size="md">{heading}</Heading>
       {children}
+    </Box>
+  );
+};
+
+const Marketbox = ({
+  isDesktop,
+  price,
+  StrokeColor,
+  arrowType,
+  Percentagechange,
+  imgSrc,
+  colorSrc,
+  market,
+}) => {
+  return (
+    <Box
+      border={boxBorderColor}
+      bg={boxBackgroundColor}
+      borderRadius="3xl"
+      py={18}
+      align="center"
+      mt={5}
+      p={4}
+      height={170}
+      w={isDesktop ? 300 : "100%"}
+    >
+      <Flex>
+        <ChakraImage
+          src={imgSrc}
+          alt="Crypto"
+          bg={colorSrc}
+          borderRadius="full"
+          p={0.5}
+          h={"24px"}
+          w={"auto"}
+        />
+        &nbsp;
+        <Text color="gray.500">${market}</Text>
+      </Flex>
+      <Stat>
+        <Heading
+          size={{ base: "lg", lg: "lg" }}
+          textAlign="center"
+          m={3}
+          mb={3}
+          color="white"
+        >
+          ${price}
+        </Heading>
+
+        <StatHelpText color={StrokeColor}>
+          <StatArrow type={arrowType} />
+          {Percentagechange}%
+        </StatHelpText>
+      </Stat>
     </Box>
   );
 };
