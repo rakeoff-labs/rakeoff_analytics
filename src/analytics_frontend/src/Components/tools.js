@@ -22,8 +22,7 @@ export const getRakeoffStats = async () => {
 };
 
 export const icpToDollars = async (e8sIcp) => {
-  const CoinApi =
-    "https://api.coingecko.com/api/v3/simple/price?ids=internet-computer&vs_currencies=usd";
+  const CoinApi = "https://api.coinbase.com/v2/prices/ICP-USD/buy";
 
   try {
     let resp = await fetch(CoinApi).then((x) => x.json());
@@ -41,3 +40,14 @@ export const icpToDollars = async (e8sIcp) => {
     return "$0.00";
   }
 };
+
+// export const icpToDollars = async () => {
+//     const CoinApi = "https://api.coinbase.com/v2/prices/ICP-USD/buy";
+
+//     try {
+//       let { data : { amount }} = await fetch(CoinApi).then((x) => x.json());
+//       return Number(amount)
+//     } catch (e) {
+//       return "$0.00";
+//     }
+//   };

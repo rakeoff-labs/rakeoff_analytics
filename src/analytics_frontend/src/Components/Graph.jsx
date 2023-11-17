@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  BarChart,
   XAxis,
   Bar,
   YAxis,
   LineChart,
   Line,
   Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
 } from "recharts";
 import {
   Box,
@@ -15,18 +18,12 @@ import {
   SimpleGrid,
   useBreakpointValue,
   Center,
-  Stat,
-  StatHelpText,
-  Text,
-  Flex,
-  StatArrow,
-  Image as ChakraImage,
+  Link,
 } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+
 import { boxBackgroundColor, boxBorderColor } from "./colors";
 import { getRakeoffStats, icpToDollars } from "./tools";
-import IcLogo from "../../assets/ic-logo.png";
-import ckbtc_logo from "../../assets/ckbtc_logo.png";
-import ethereum_logo from "../../assets/ethereum_logo.png";
 
 export default function Graph() {
   // RAKEOFF API ///
@@ -89,109 +86,6 @@ export default function Graph() {
   useEffect(() => {
     getGraphData();
   }, []); //
-
-  // ICP price API /////
-  /////////////////
-
-  // Storing the change in price
-
-  const [icpPrice, setIcpPrice] = useState(0);
-  // Storing the change in pentage of price in last 24 hours
-  const [icpPercentChange, setIcpPercentChange] = useState(0);
-
-  useEffect(() => {
-    fetch(
-      // 900 seconds = 15 mins
-      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("We gots an error");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Gets price every 15 mins, 4 intervals each hour
-        const price = data[0][4];
-        // Gets 4 * 24 is 96, each hour has 4 intervals
-        const price24Ago = data[96][4];
-        // Getting average * by 100 for percentage
-        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
-        setIcpPrice(price);
-        setIcpPercentChange(percentageChange);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  }, []);
-
-  // changes to red if change less than 0, else stays green ///
-  /////////////////
-
-  const icpStrokeColor = icpPercentChange > 0 ? "#38A169" : "#E53E3E";
-  const icparrowType = icpPercentChange > 0 ? "increase" : "decrease";
-
-  // BTC price API //////
-  /////////////////
-
-  const [btcPrice, setBtcPrice] = useState(0);
-  const [btcPercentChange, setBtcPercentChange] = useState(0);
-
-  useEffect(() => {
-    fetch(
-      "https://api.pro.coinbase.com/products/BTC-USD/candles?granularity=900"
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("We gots an error");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const price = data[0][4];
-        const price24Ago = data[96][4];
-        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
-        setBtcPrice(price);
-        setBtcPercentChange(percentageChange);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  }, []);
-
-  const btcStrokeColor = btcPercentChange > 0 ? "#38A169" : "#E53E3E";
-  const btcarrowType = btcPercentChange > 0 ? "increase" : "decrease";
-
-  // ETH price API //////
-  /////////////////
-
-  const [ethPrice, setEthPrice] = useState(0);
-  const [ethPercentChange, setEthPercentChange] = useState(0);
-
-  useEffect(() => {
-    fetch(
-      "https://api.pro.coinbase.com/products/ETH-USD/candles?granularity=900"
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("We gots an error");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const price = data[0][4];
-        const price24Ago = data[96][4];
-        const percentageChange = ((price - price24Ago) / price24Ago) * 100;
-        setEthPrice(price);
-        setEthPercentChange(percentageChange);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  }, []);
-
-  const ethStrokeColor = ethPercentChange > 0 ? "#38A169" : "#E53E3E";
-  const etharrowType = ethPercentChange > 0 ? "increase" : "decrease";
 
   // GITHUB API ///
   /////////////////
@@ -309,6 +203,28 @@ export default function Graph() {
 
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
+  const [defiLama, setDefiLama] = useState([]);
+
+  useEffect(() => {
+    fetch("https://api.llama.fi/protocol/rakeoff")
+      .then((response) => {
+        if (!response) {
+          throw new Error("no API");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const getDates = data.tvl.map((item) => ({
+          date: new Date(item.date * 1000).toLocaleDateString(),
+          tvl: item.totalLiquidityUSD,
+        }));
+        setDefiLama(getDates);
+      })
+      .catch((error) => {
+        console.error("catched error", error);
+      });
+  }, []);
+
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
       <Center>
@@ -338,21 +254,43 @@ export default function Graph() {
               cursor="pointer"
               align="center"
               m={2}
-              w={{ base: "400px", md: "400px", lg: "100%" }}
+              w="100%"
               height={530}
             >
-              <Heading size="md">Pool history winner amount $</Heading>
-              <BarChart
-                width={isDesktop ? 580 : 400}
-                height={450}
-                data={graphData}
-                margin={{ top: 10, right: 50, left: 0, bottom: 0 }}
+              <Heading size="md" mb={2}>
+                Total value locked
+              </Heading>
+              <ResponsiveContainer height={445} width="100%">
+                <AreaChart
+                  data={defiLama}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="tvl"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                  />
+                  {/* <Line
+                    type="monotone"
+                    dataKey="tvl"
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                  /> */}
+                </AreaChart>
+              </ResponsiveContainer>
+              <Link
+                href="https://defillama.com/protocol/rakeoff"
+                ml={9}
+                isExternal
               >
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Bar dataKey="amount" fill="#8a2be2" barSize={50} /> //blue
-                violet either
-              </BarChart>
+                Defi Lama
+                <ExternalLinkIcon mx="3px" />
+              </Link>
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
@@ -360,7 +298,7 @@ export default function Graph() {
               <Center>
                 <LineChart
                   mb={4}
-                  width={isDesktop ? 680 : 415} // anything greater pushes the mobile off
+                  width={isDesktop ? 680 : "100%"} // anything greater pushes the mobile off
                   height={200}
                   data={chartData}
                   align="center"
@@ -381,34 +319,18 @@ export default function Graph() {
             </BoxLayout>
           </Box>
           <Box gridArea="Othergraph">
-            <BoxLayout heading="Marketprices">
-              <SimpleGrid columns={3} gap={3}>
-                <Marketbox
-                  price={icpPrice.toFixed(2)}
-                  colorSrc="white"
-                  StrokeColor={icpStrokeColor}
-                  imgSrc={IcLogo}
-                  arrowType={icparrowType}
-                  Percentagechange={icpPercentChange.toFixed(2)}
-                  market="ICP"
-                />
-                <Marketbox
-                  StrokeColor={btcStrokeColor}
-                  price={btcPrice.toFixed(0)}
-                  market="ckBTC"
-                  imgSrc={ckbtc_logo}
-                  arrowType={btcarrowType}
-                  Percentagechange={btcPercentChange.toFixed(2)}
-                />
-                <Marketbox
-                  StrokeColor={ethStrokeColor}
-                  price={ethPrice.toFixed(0)}
-                  market="ETH"
-                  imgSrc={ethereum_logo}
-                  arrowType={etharrowType}
-                  Percentagechange={ethPercentChange.toFixed(2)}
-                />
-              </SimpleGrid>
+            <BoxLayout heading="Pool history">
+              <LineChart
+                mb={4}
+                width="100%"
+                height={200}
+                data={graphData}
+                margin={{ top: 10, right: 160, left: 0, bottom: 0 }}
+              >
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
+              </LineChart>
             </BoxLayout>
           </Box>
         </SimpleGrid>
@@ -431,67 +353,10 @@ const BoxLayout = ({ isDesktop, heading, children }) => {
       m={2}
       p={2}
       height={250}
-      w={isDesktop ? 300 : "100%"}
+      w={isDesktop ? "100%" : "100%"}
     >
       <Heading size="md">{heading}</Heading>
       {children}
-    </Box>
-  );
-};
-
-const Marketbox = ({
-  isDesktop,
-  price,
-  StrokeColor,
-  arrowType,
-  Percentagechange,
-  imgSrc,
-  colorSrc,
-  market,
-  mb,
-  h,
-}) => {
-  return (
-    <Box
-      border={boxBorderColor}
-      bg={boxBackgroundColor}
-      borderRadius="3xl"
-      py={18}
-      align="center"
-      mt={5}
-      p={4}
-      height={170}
-      w={isDesktop ? 300 : "100%"}
-    >
-      <Flex>
-        <ChakraImage
-          src={imgSrc}
-          alt="Crypto"
-          bg={colorSrc}
-          borderRadius="full"
-          p={0.5}
-          h={"24px"}
-          w={"auto"}
-        />
-        &nbsp;
-        <Text color="gray.500">${market}</Text>
-      </Flex>
-      <Stat>
-        <Heading
-          size={{ base: "sm", lg: "lg" }}
-          textAlign="center"
-          m={1}
-          mt={3}
-          color="white"
-        >
-          ${price}
-        </Heading>
-
-        <StatHelpText color={StrokeColor}>
-          <StatArrow type={arrowType} />
-          {Percentagechange}%
-        </StatHelpText>
-      </Stat>
     </Box>
   );
 };

@@ -4,6 +4,9 @@ import { getRakeoffStats, icpToDollars } from "./tools";
 import { StoryBoxAndImage } from "./TopStat";
 
 const BottomStat = () => {
+  // RAKEOFF API //////
+  /////////////////
+
   const [highestWinner, setHighestWinner] = useState(0);
   const [higestPool, setHighestPool] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
