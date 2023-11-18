@@ -25,9 +25,12 @@ export const icpToDollars = async (e8sIcp) => {
   const CoinApi = "https://api.coinbase.com/v2/prices/ICP-USD/buy";
 
   try {
-    let resp = await fetch(CoinApi).then((x) => x.json());
-    let price = resp["internet-computer"].usd;
+    // Fetch the USD conversion rate for ICP
+    let {
+      data: { amount },
+    } = await fetch(CoinApi).then((x) => x.json());
 
+    // Create a formatter for USD currency
     let formatCurrency = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -35,19 +38,13 @@ export const icpToDollars = async (e8sIcp) => {
       maximumFractionDigits: 0, // No decimals
     });
 
-    return formatCurrency.format(price * e8sToIcp(e8sIcp));
+    // Convert e8sIcp to the standard ICP unit
+    const icpAmount = e8sIcp / Math.pow(10, 8);
+
+    // Convert ICP to USD and then format as currency
+    const convertedAmount = icpAmount * Number(amount);
+    return formatCurrency.format(convertedAmount);
   } catch (e) {
     return "$0.00";
   }
 };
-
-// export const icpToDollars = async () => {
-//     const CoinApi = "https://api.coinbase.com/v2/prices/ICP-USD/buy";
-
-//     try {
-//       let { data : { amount }} = await fetch(CoinApi).then((x) => x.json());
-//       return Number(amount)
-//     } catch (e) {
-//       return "$0.00";
-//     }
-//   };

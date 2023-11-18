@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 import {
-  Banner,
+  MixofCs,
   Footer,
   Topstat,
   Graph,
@@ -14,20 +14,12 @@ export const boxBackgroundColor = "#292e40";
 
 const App = () => {
   return (
-    <>
-      <Box
-        bgGradient={`linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`}
-      >
-        <Navbar />
-        <Banner />
-        <Topstat />
-      </Box>
-      <Box bg={mainBackgroundColor}>
-        <Graph />
-        <BottomStat />
-        <Footer />
-      </Box>
-    </>
+    <Box>
+      <MixofCs />
+
+      <BottomStat />
+      <Footer />
+    </Box>
   );
 };
 

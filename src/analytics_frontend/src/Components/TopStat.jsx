@@ -6,6 +6,7 @@ import {
   Container,
   Stat,
   StatNumber,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
 
@@ -15,6 +16,7 @@ const Topstat = () => {
   // RAKEOFF API //////
   /////////////////
 
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
   const [icpStakers, setIcpStakers] = useState(0);
 
   const [claimedAchiev, setClaimedAchiev] = useState(0);
@@ -43,38 +45,56 @@ const Topstat = () => {
         spacing={{ base: 3, md: 8 }}
         mx={{ base: 3, md: 3, lg: 0 }}
       >
-        <StoryBoxAndImage heading={claimedAchiev} info="Claimed ICP bonus" />
-        <StoryBoxAndImage heading={totalRewarded} info="Total ICP rewarded" />
-        <StoryBoxAndImage heading={icpStakers} info="Total stakers" />
-        <StoryBoxAndImage heading={stakedAmount} info="Staked amount" />
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
+          heading={icpStakers}
+          info="Total stakers"
+        />
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
+          heading={stakedAmount}
+          info="Staked amount"
+        />
+
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
+          heading={totalRewarded}
+          info="ICP rewarded"
+        />
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
+          heading={claimedAchiev}
+          info="Claimed ICP bonus"
+        />
       </SimpleGrid>
     </Container>
   );
 };
 export default Topstat;
 
-export const StoryBoxAndImage = ({ heading, info }) => {
+export const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
   return (
     <Box
       bg={boxBackgroundColor}
       border={boxBorderColor}
       borderRadius="2xl"
       py={18}
-      transition="transform 0.3s"
-      _hover={{ transform: "translateY(-5px)" }}
-      cursor="pointer"
       align="center"
       m={2}
       p={6}
       w="100%"
     >
-      <Heading size="lg" textAlign="center" m={3} mb={3} color="white">
+      <Heading
+        size={isDesktop ? "lg" : "sm"}
+        textAlign="center"
+        m={3}
+        mb={3}
+        color="white"
+      >
         {heading}
       </Heading>
 
-      <Stat>
-        <StatNumber> {info}</StatNumber>
-      </Stat>
+      <Heading size={isDesktop ? "md" : "sm"}> {info}</Heading>
     </Box>
   );
 };

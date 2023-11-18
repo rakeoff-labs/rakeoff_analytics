@@ -8,9 +8,36 @@ import {
   StatHelpText,
   Flex,
   StatArrow,
-  Center,
 } from "@chakra-ui/react";
+import Navbar from "./Navbar";
+import Graph from "./Graph";
+import Topstat from "./TopStat";
 
+export const boxBackgroundColor = "#292e40";
+const MixofCs = () => {
+  return (
+    <Box position="relative">
+      <Box
+        bgGradient={`linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`}
+      >
+        <Navbar />
+        <Banner />
+        <Topstat />
+      </Box>
+      <Graph />
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
+        h="50%"
+        bgGradient={`linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`}
+        zIndex="-1"
+      />
+    </Box>
+  );
+};
+export default MixofCs;
 const Banner = () => {
   return (
     <Container
@@ -28,8 +55,6 @@ const Banner = () => {
     </Container>
   );
 };
-
-export default Banner;
 
 const Marketbox = () => {
   const [grabICP, setGrabIcp] = useState(0);

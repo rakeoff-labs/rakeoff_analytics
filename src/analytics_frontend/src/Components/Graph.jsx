@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  BarChart,
 } from "recharts";
 import {
   Box,
@@ -29,6 +30,7 @@ export default function Graph() {
   // RAKEOFF API ///
   /////////////////
   const [graphData, setGraphData] = useState([]);
+
   const monthNamespool = [
     "Jan",
     "Feb",
@@ -58,18 +60,23 @@ export default function Graph() {
       const numDigits = Math.ceil(Math.log10(usdAmount + 1));
       //rounding to show two digit
       const totalAmount = Math.floor(usdAmount / Math.pow(10, numDigits - 2));
+      const totalUsdAmount = graphData.reduce(
+        (acc, item) => acc + item.amount,
+        0
+      );
+      const formattedTotalUsdAmount = `$${totalUsdAmount.toFixed(2)}`;
 
       console.log(totalAmount);
 
       return {
         date: monthYear,
-        amount: totalAmount,
+        amount: usdAmount,
       };
     });
     const formattedData = await Promise.all(dataPromises);
 
     // Showing several months since we dont have all the history
-    const allMonths = ["Nov", "Dec", "Jan", "Feb", "Mar"];
+    const allMonths = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
     const baseData = allMonths.map((month) => ({ date: month, amount: "$0" }));
 
     // Merge actual data with base data
@@ -204,6 +211,7 @@ export default function Graph() {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
 
   const [defiLama, setDefiLama] = useState([]);
+  const [totalVal, setTotalVal] = useState(0);
 
   useEffect(() => {
     fetch("https://api.llama.fi/protocol/rakeoff")
@@ -214,11 +222,24 @@ export default function Graph() {
         return response.json();
       })
       .then((data) => {
-        const getDates = data.tvl.map((item) => ({
-          date: new Date(item.date * 1000).toLocaleDateString(),
-          tvl: item.totalLiquidityUSD,
-        }));
+        const getDates = data.tvl.map((item) => {
+          const date = new Date(item.date * 1000);
+          const formattedDate = `${date.getDate()} ${date.toLocaleString(
+            "default",
+            { month: "short" }
+          )}`;
+          const formattedTvl = `$${item.totalLiquidityUSD.toLocaleString()}`;
+
+          return {
+            date: formattedDate,
+            tvl: item.totalLiquidityUSD, // Keep as a number for the Y-axis
+            formattedTvl: formattedTvl,
+          };
+        });
+        const mostRecentTvl = data.tvl[data.tvl.length - 1]?.totalLiquidityUSD;
+        const formattedTotal = `$${mostRecentTvl.toLocaleString()}`;
         setDefiLama(getDates);
+        setTotalVal(formattedTotal);
       })
       .catch((error) => {
         console.error("catched error", error);
@@ -249,38 +270,36 @@ export default function Graph() {
               border={boxBorderColor}
               borderRadius="2xl"
               py={18}
-              transition="transform 0.3s"
-              _hover={{ transform: "translateY(-5px)" }}
-              cursor="pointer"
               align="center"
               m={2}
               w="100%"
               height={530}
             >
               <Heading size="md" mb={2}>
-                Total value locked
+                Total value locked:{" "}
+                <span style={{ color: "#8a2be2" }}>{totalVal}</span>
               </Heading>
-              <ResponsiveContainer height={445} width="100%">
+
+              <ResponsiveContainer height={isDesktop ? 445 : 410} width="100%">
                 <AreaChart
                   data={defiLama}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis
+                    type="number"
+                    domain={[0, 50000]}
+                    tickFormatter={(value) => `$${value.toLocaleString()}`}
+                  />
+
                   <Area
                     type="monotone"
                     dataKey="tvl"
                     stroke="#8884d8"
-                    fill="#8884d8"
+                    fill="#8a2be2"
                   />
-                  {/* <Line
-                    type="monotone"
-                    dataKey="tvl"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                  /> */}
+                  <Tooltip />
                 </AreaChart>
               </ResponsiveContainer>
               <Link
@@ -288,49 +307,61 @@ export default function Graph() {
                 ml={9}
                 isExternal
               >
-                Defi Lama
+                DefiLlama
                 <ExternalLinkIcon mx="3px" />
               </Link>
             </Box>
           </Box>
           <Box gridArea="Githubcommits">
-            <BoxLayout heading={"dApp commits: " + totalCommits}>
+            <BoxLayout>
+              <Heading size="md" mb={2}>
+                Total commits to dApp:{" "}
+                <span mb={2} style={{ color: "#8a2be2" }}>
+                  {totalCommits}
+                </span>
+              </Heading>
+
               <Center>
                 <LineChart
                   mb={4}
-                  width={isDesktop ? 680 : "100%"} // anything greater pushes the mobile off
+                  width={isDesktop ? 680 : 300} // anything greater pushes the mobile off
                   height={200}
                   data={chartData}
                   align="center"
-                  margin={{
-                    top: 15,
-                    right: 80,
-                    left: 30,
-                    bottom: 0,
-                  }}
+                  margin={
+                    isDesktop
+                      ? { top: 15, right: 80, left: 30, bottom: 0 }
+                      : { top: 10, right: 80, left: 10, bottom: 0 }
+                  }
                 >
                   <XAxis dataKey="month" />
                   <YAxis />
 
-                  <Line type="monotone" dataKey="commits" stroke="#82ca9d" />
+                  <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
                   <Tooltip />
                 </LineChart>
               </Center>
             </BoxLayout>
           </Box>
           <Box gridArea="Othergraph">
-            <BoxLayout heading="Pool history">
-              <LineChart
-                mb={4}
-                width="100%"
+            <BoxLayout>
+              <Heading size="md" mb={2}>
+                Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
+              </Heading>
+              <BarChart
+                width={isDesktop ? 700 : 240} // anything greater pushes the mobile off
                 height={200}
                 data={graphData}
-                margin={{ top: 10, right: 160, left: 0, bottom: 0 }}
+                margin={
+                  isDesktop
+                    ? { top: 10, right: 200, left: 0, bottom: 0 }
+                    : { top: 10, right: 80, left: 0, bottom: 0 }
+                }
               >
                 <XAxis dataKey="date" />
-                <YAxis />
+                <YAxis tickFormatter={(value) => `$${value.toFixed(0)}`} />
                 <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
-              </LineChart>
+              </BarChart>
             </BoxLayout>
           </Box>
         </SimpleGrid>
@@ -339,23 +370,21 @@ export default function Graph() {
   );
 }
 
-const BoxLayout = ({ isDesktop, heading, children }) => {
+const BoxLayout = ({ heading, children }) => {
   return (
     <Box
       border={boxBorderColor}
       bg={boxBackgroundColor}
       borderRadius="2xl"
       py={18}
-      transition="transform 0.3s"
-      _hover={{ transform: "translateY(-5px)" }}
-      cursor="pointer"
       align="center"
       m={2}
       p={2}
       height={250}
-      w={isDesktop ? "100%" : "100%"}
+      w="100%"
     >
       <Heading size="md">{heading}</Heading>
+
       {children}
     </Box>
   );

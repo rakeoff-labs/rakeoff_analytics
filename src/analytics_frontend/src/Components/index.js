@@ -1,4 +1,4 @@
-export { default as Banner } from "./Banner";
+export { default as MixofCs } from "./MixofCs";
 export { default as Footer } from "./Footer";
 export { default as Topstat } from "./TopStat";
 export { default as BottomStat } from "./BottomStat";
