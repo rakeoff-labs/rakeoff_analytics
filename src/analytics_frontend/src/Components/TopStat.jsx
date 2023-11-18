@@ -27,7 +27,9 @@ const Topstat = () => {
     const stat = await getRakeoffStats();
 
     setIcpStakers(stat.total_stakers);
-    setStakedAmount(await icpToDollars(stat.total_staked));
+    setStakedAmount(
+      Math.round(e8sToIcp(Number(stat.total_staked))).toLocaleString()
+    );
 
     setClaimedAchiev(Math.round(e8sToIcp(stat.claimed_from_achievements)));
     setTotalRewarded(Math.round(e8sToIcp(stat.total_rewarded)));
