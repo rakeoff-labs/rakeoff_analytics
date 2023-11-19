@@ -1,28 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Children } from "react";
 import {
   Box,
   Container,
   Heading,
   Text,
-  Stat,
-  StatHelpText,
   Flex,
-  StatArrow,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import Graph from "./Graph";
 import Topstat from "./TopStat";
 
+import { getRakeoffStats, e8sToIcp, icpToDollars } from "./tools";
+
 export const boxBackgroundColor = "#292e40";
 const MixofCs = () => {
   return (
     <Box position="relative">
-      <Box
-        bgGradient={`linear(to-bl, ${boxBackgroundColor}, purple.500, #6229a8)`}
-      >
+      <Box>
         <Navbar />
         <Banner />
-        <Topstat />
       </Box>
       <Graph />
       <Box
@@ -38,7 +35,7 @@ const MixofCs = () => {
   );
 };
 export default MixofCs;
-const Banner = () => {
+const Banner = ({ grabICP, icpStakers }) => {
   return (
     <Container
       maxW="7xl"
@@ -57,8 +54,25 @@ const Banner = () => {
 };
 
 const Marketbox = () => {
+  const [icpStakers, setIcpStakers] = useState(0);
+  const [stakedAmount, setStakedAmount] = useState(0);
+  const [icpFees, setIcpFees] = useState(0);
+
+  const fetchStats = async () => {
+    const stat = await getRakeoffStats();
+
+    setIcpStakers(stat.total_stakers);
+    setStakedAmount(
+      Math.round(e8sToIcp(Number(stat.total_staked))).toLocaleString()
+    );
+    setIcpFees(await icpToDollars(Number(stat.fees_collected)));
+  };
+
+  useEffect(() => {
+    fetchStats();
+  });
+
   const [grabICP, setGrabIcp] = useState(0);
-  const [twentyfour, setTwentyfour] = useState(0);
 
   useEffect(() => {
     fetch(
@@ -72,35 +86,28 @@ const Marketbox = () => {
       })
       .then((data) => {
         const price = data[0][4];
-        const priceChange = data[96][4];
-        const differenceInChange = ((price - priceChange) / priceChange) * 100;
+
         setGrabIcp(price);
-        setTwentyfour(differenceInChange);
       })
       .catch((error) => {
         console.error("Failed to fetch data:", error);
       });
   }, []);
 
-  const showchangeColour = setTwentyfour > 0 ? "#38A169" : "#E53E3E";
-  const arrowtype = setTwentyfour > 0 ? "increase" : "decrease";
   return (
-    <>
-      <Flex mb={8} m={{ base: 4, md: 3 }}>
-        <Text color="gray.300" mr={1.5}>
-          ICP:
-        </Text>
-        <Text size={{ base: "sm", lg: "lg" }} color="white" mr={1.5}>
-          ${grabICP.toFixed(2)}
-        </Text>
-
-        <Stat>
-          <StatHelpText mt={0.5} color={showchangeColour}>
-            <StatArrow type={arrowtype} mr={1} />
-            {twentyfour.toFixed(2)}%
-          </StatHelpText>
-        </Stat>
-      </Flex>
-    </>
+    <SimpleGrid columns={[2, 1, 4]} spacing={{ base: 3, md: 1 }}>
+      <Box ml={8}>
+        <Text color="gray.300">ICP price: {grabICP}</Text>
+      </Box>
+      <Box ml={8}>
+        <Text color="gray.300">Total Stakers: {icpStakers}</Text>
+      </Box>
+      <Box ml={8}>
+        <Text color="gray.300">Staked Amount: {stakedAmount}</Text>
+      </Box>
+      <Box ml={8}>
+        <Text color="gray.300">Fees collected: {icpFees}</Text>
+      </Box>
+    </SimpleGrid>
   );
 };
