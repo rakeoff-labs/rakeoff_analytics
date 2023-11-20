@@ -18,7 +18,7 @@ import { Icon } from "@chakra-ui/react";
 
 const Footer = () => {
   return (
-    <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
+    <Container maxW="7xl" mt={{ base: 12, md: 12 }} p={0}>
       <Box
         borderTopWidth={1}
         borderStyle={"solid"}

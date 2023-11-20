@@ -237,7 +237,8 @@ export default function Graph() {
           };
         });
         const mostRecentTvl = data.tvl[data.tvl.length - 1]?.totalLiquidityUSD;
-        const formattedTotal = `$${mostRecentTvl.toLocaleString()}`;
+        const roundedTotal = Math.round(mostRecentTvl);
+        const formattedTotal = `$${roundedTotal.toLocaleString()}`;
         setDefiLama(getDates);
         setTotalVal(formattedTotal);
       })
@@ -289,7 +290,9 @@ export default function Graph() {
                   <YAxis
                     type="number"
                     domain={[0, 50000]}
-                    tickFormatter={(value) => `$${value.toLocaleString()}`}
+                    tickFormatter={(value) =>
+                      `$${Math.round(value).toLocaleString()}`
+                    }
                   />
 
                   <Area
@@ -298,7 +301,6 @@ export default function Graph() {
                     stroke="#8884d8"
                     fill="#8a2be2"
                   />
-                  <Tooltip />
                 </AreaChart>
               </ResponsiveContainer>
               <Link
@@ -380,7 +382,6 @@ const BoxLayout = ({ heading, children }) => {
       m={2}
       p={2}
       height={250}
-      color="gray.300"
       w="100%"
     >
       <Heading size="md">{heading}</Heading>

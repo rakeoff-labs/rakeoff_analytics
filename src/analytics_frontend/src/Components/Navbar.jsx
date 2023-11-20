@@ -89,7 +89,7 @@ const Navbar = () => {
               target="_blank"
               bg={boxBackgroundColor}
               _hover={{
-                boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
+                boxShadow: `0px 0px 10px 6px $white`,
               }}
               boxShadow={`0px 0px 10px 3px white`}
               color="white"

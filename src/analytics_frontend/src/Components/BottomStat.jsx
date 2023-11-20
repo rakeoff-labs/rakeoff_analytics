@@ -18,7 +18,7 @@ const BottomStat = () => {
   const [totalWinners, setTotalWinners] = useState(0);
   const [avgWinner, setAverageWinner] = useState(0);
   const [claimedICP, setClaimedICP] = useState(0);
-  const [totalICPrewarded, setTotalICPrewarded] = useState(0);
+  const [totalClaims, setTotalClaims] = useState(0);
 
   const fetchPrizeStat = async () => {
     const getStat = await getRakeoffStats();
@@ -33,8 +33,8 @@ const BottomStat = () => {
         e8sToIcp(Number(getStat.claimed_from_achievements))
       ).toLocaleString()
     );
-    setTotalICPrewarded(
-      Math.round(e8sToIcp(Number(getStat.total_rewarded))).toLocaleString()
+    setTotalClaims(
+      Math.round(Number(getStat.total_neurons_in_achievements)).toLocaleString()
     );
   };
 
@@ -51,18 +51,18 @@ const BottomStat = () => {
         m={{ base: 6, md: 3 }}
         color="white"
       >
-        Pool stats
+        ICP Pools
       </Heading>
       <SimpleGrid
         gap={3}
-        columns={[2, 1, 4]}
+        columns={[1, 1, 3]}
         spacing={{ base: 3, md: 4 }}
         mx={{ base: 3, md: 3, lg: 0 }}
       >
         <StoryBoxAndImage
           isDesktop={isDesktop}
           heading={highestWinner}
-          info="Highest winner"
+          info="Highest prize won"
         />
         <StoryBoxAndImage
           isDesktop={isDesktop}
@@ -74,11 +74,6 @@ const BottomStat = () => {
           heading={totalWinners}
           info="Total winners"
         />
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={avgWinner}
-          info="Average winning"
-        />
       </SimpleGrid>
       <Heading
         align="start"
@@ -86,7 +81,7 @@ const BottomStat = () => {
         m={{ base: 6, md: 3 }}
         color="white"
       >
-        Achievement stats
+        ICP Bonuses
       </Heading>
 
       <SimpleGrid
@@ -96,14 +91,14 @@ const BottomStat = () => {
         mx={{ base: 3, md: 3, lg: 0 }}
       >
         <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={totalICPrewarded}
-          info="Total ICP rewarded"
-        />
-        <StoryBoxAndImage
           heading={claimedICP}
           isDesktop={isDesktop}
-          info="Claimed ICP bonus"
+          info=" ICP bonuses claimed"
+        />
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
+          heading={totalClaims}
+          info="Total claims"
         />
       </SimpleGrid>
     </Container>
@@ -124,7 +119,7 @@ const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
       w="100%"
     >
       <Heading
-        size={isDesktop ? "lg" : "sm"}
+        size={isDesktop ? "lg" : "md"}
         textAlign="center"
         m={3}
         mb={3}
@@ -133,8 +128,7 @@ const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
         {heading}
       </Heading>
 
-      <Heading size={isDesktop ? "md" : "sm"} color="gray.300">
-        {" "}
+      <Heading size={isDesktop ? "md" : "md"} color="gray.300">
         {info}
       </Heading>
     </Box>

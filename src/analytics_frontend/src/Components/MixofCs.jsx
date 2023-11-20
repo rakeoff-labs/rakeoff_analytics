@@ -44,7 +44,7 @@ const Banner = () => {
     >
       <Box align="start" m={{ base: 6, md: 3 }}>
         <Heading size="2xl" mb={8}>
-          RAKEOFFF Analytics
+          RAKEOFF Analytics
         </Heading>
       </Box>
       <Marketbox />
@@ -102,7 +102,7 @@ const Marketbox = () => {
       <Box>
         <Flex direction="row" wrap="wrap" align="center">
           <Text color="white" mr={3}>
-            ICP price: {grabICP}
+            ICP price: ${grabICP.toFixed(2)}
           </Text>
           <Text color="white" mr={3}>
             Total Stakers: {icpStakers}
