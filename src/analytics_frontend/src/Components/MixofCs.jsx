@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import Graph from "./Graph";
-import Topstat from "./TopStat";
 
 import { getRakeoffStats, e8sToIcp, icpToDollars } from "./tools";
 
@@ -35,7 +34,7 @@ const MixofCs = () => {
   );
 };
 export default MixofCs;
-const Banner = ({ grabICP, icpStakers }) => {
+const Banner = () => {
   return (
     <Container
       maxW="7xl"
@@ -45,7 +44,7 @@ const Banner = ({ grabICP, icpStakers }) => {
     >
       <Box align="start" m={{ base: 6, md: 3 }}>
         <Heading size="2xl" mb={8}>
-          Rakeoff Analytics
+          RAKEOFFF Analytics
         </Heading>
       </Box>
       <Marketbox />
@@ -95,18 +94,24 @@ const Marketbox = () => {
   }, []);
 
   return (
-    <SimpleGrid columns={[2, 1, 4]} spacing={{ base: 3, md: 1 }}>
-      <Box ml={8}>
-        <Text color="gray.300">ICP price: {grabICP}</Text>
-      </Box>
-      <Box ml={8}>
-        <Text color="gray.300">Total Stakers: {icpStakers}</Text>
-      </Box>
-      <Box ml={8}>
-        <Text color="gray.300">Staked Amount: {stakedAmount}</Text>
-      </Box>
-      <Box ml={8}>
-        <Text color="gray.300">Fees collected: {icpFees}</Text>
+    <SimpleGrid
+      columns={[1, 1]}
+      spacing={{ base: 3, md: 1 }}
+      m={{ base: 6, md: 3 }}
+    >
+      <Box>
+        <Flex direction="row" wrap="wrap" align="center">
+          <Text color="white" mr={3}>
+            ICP price: {grabICP}
+          </Text>
+          <Text color="white" mr={3}>
+            Total Stakers: {icpStakers}
+          </Text>
+          <Text color="white" mr={3}>
+            Staked Amount: {stakedAmount}
+          </Text>
+          <Text color="white">Fees collected: {icpFees}</Text>
+        </Flex>
       </Box>
     </SimpleGrid>
   );

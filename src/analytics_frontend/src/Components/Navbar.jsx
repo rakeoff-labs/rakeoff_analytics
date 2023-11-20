@@ -117,9 +117,9 @@ const MobileMenu = () => {
         onClick={onOpen}
         bg={boxBackgroundColor}
         _hover={{
-          boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
+          boxShadow: `0px 0px 10px 6px white`,
         }}
-        boxShadow={`0px 0px 10px 3px ${RakeoffPurpleHue}`}
+        boxShadow={`0px 0px 10px 3px white`}
         color="white"
       />
       <Drawer onClose={onClose} isOpen={isOpen}>
@@ -181,9 +181,9 @@ const MobileMenu = () => {
                 size="lg"
                 bg={boxBackgroundColor}
                 _hover={{
-                  boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
+                  boxShadow: `0px 0px 10px 6px white`,
                 }}
-                boxShadow={`0px 0px 10px 3px ${RakeoffPurpleHue}`}
+                boxShadow={`0px 0px 10px 3px white`}
                 color="white"
                 w="100%"
               >

@@ -254,7 +254,6 @@ export default function Graph() {
           columns={[1, 1, 2]}
           spacing={{ base: 3, md: 8 }}
           mx={{ base: 3, md: 3, lg: 0 }}
-          w="100%"
           templateAreas={[
             `"Poolhistory"
             "Githubcommits"
@@ -275,9 +274,9 @@ export default function Graph() {
               w="100%"
               height={530}
             >
-              <Heading size="md" mb={2}>
+              <Heading size="md" color="gray.300" mb={2}>
                 Total value locked:{" "}
-                <span style={{ color: "#8a2be2" }}>{totalVal}</span>
+                <span style={{ color: "white" }}>{totalVal}</span>
               </Heading>
 
               <ResponsiveContainer height={isDesktop ? 445 : 410} width="100%">
@@ -316,7 +315,7 @@ export default function Graph() {
             <BoxLayout>
               <Heading size="md" mb={2}>
                 Total commits to dApp:{" "}
-                <span mb={2} style={{ color: "#8a2be2" }}>
+                <span mb={2} style={{ color: "white" }}>
                   {totalCommits}
                 </span>
               </Heading>
@@ -381,6 +380,7 @@ const BoxLayout = ({ heading, children }) => {
       m={2}
       p={2}
       height={250}
+      color="gray.300"
       w="100%"
     >
       <Heading size="md">{heading}</Heading>

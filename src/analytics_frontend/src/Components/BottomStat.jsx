@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
-import { getRakeoffStats, icpToDollars } from "./tools";
-import { StoryBoxAndImage } from "./TopStat";
+import {
+  Container,
+  SimpleGrid,
+  useBreakpointValue,
+  Box,
+  Heading,
+} from "@chakra-ui/react";
+import { getRakeoffStats, icpToDollars, e8sToIcp } from "./tools";
+import { boxBackgroundColor, boxBorderColor } from "./colors";
 
 const BottomStat = () => {
   // RAKEOFF API //////
@@ -11,8 +17,8 @@ const BottomStat = () => {
   const [higestPool, setHighestPool] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
   const [avgWinner, setAverageWinner] = useState(0);
-  const [icpFees, setIcpFees] = useState(0);
-  const [failedpools, setFailedPools] = useState(0);
+  const [claimedICP, setClaimedICP] = useState(0);
+  const [totalICPrewarded, setTotalICPrewarded] = useState(0);
 
   const fetchPrizeStat = async () => {
     const getStat = await getRakeoffStats();
@@ -20,9 +26,16 @@ const BottomStat = () => {
     setHighestWinner(await icpToDollars(Number(getStat.highest_win_amount)));
     setHighestPool(await icpToDollars(Number(getStat.highest_pool)));
     setTotalWinners(getStat.total_winners_processed);
-    setFailedPools(await getStat.total_winner_processing_failures);
+
     setAverageWinner(await icpToDollars(getStat.average_win_amount));
-    setIcpFees(await icpToDollars(Number(getStat.fees_collected)));
+    setClaimedICP(
+      Math.round(
+        e8sToIcp(Number(getStat.claimed_from_achievements))
+      ).toLocaleString()
+    );
+    setTotalICPrewarded(
+      Math.round(e8sToIcp(Number(getStat.total_rewarded))).toLocaleString()
+    );
   };
 
   useEffect(() => {
@@ -32,6 +45,14 @@ const BottomStat = () => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
+      <Heading
+        align="start"
+        size={{ base: "md", md: "lg" }}
+        m={{ base: 6, md: 3 }}
+        color="white"
+      >
+        Pool stats
+      </Heading>
       <SimpleGrid
         gap={3}
         columns={[2, 1, 4]}
@@ -59,6 +80,15 @@ const BottomStat = () => {
           info="Average winning"
         />
       </SimpleGrid>
+      <Heading
+        align="start"
+        size={{ base: "md", md: "lg" }}
+        m={{ base: 6, md: 3 }}
+        color="white"
+      >
+        Achievement stats
+      </Heading>
+
       <SimpleGrid
         gap={3}
         columns={[2, 1, 2]}
@@ -67,13 +97,13 @@ const BottomStat = () => {
       >
         <StoryBoxAndImage
           isDesktop={isDesktop}
-          heading={failedpools}
-          info="Failed pools"
+          heading={totalICPrewarded}
+          info="Total ICP rewarded"
         />
         <StoryBoxAndImage
-          heading={icpFees}
+          heading={claimedICP}
           isDesktop={isDesktop}
-          info="Fees collected"
+          info="Claimed ICP bonus"
         />
       </SimpleGrid>
     </Container>
@@ -81,3 +111,32 @@ const BottomStat = () => {
 };
 
 export default BottomStat;
+const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
+  return (
+    <Box
+      bg={boxBackgroundColor}
+      border={boxBorderColor}
+      borderRadius="2xl"
+      py={18}
+      align="center"
+      m={2}
+      p={6}
+      w="100%"
+    >
+      <Heading
+        size={isDesktop ? "lg" : "sm"}
+        textAlign="center"
+        m={3}
+        mb={3}
+        color="white"
+      >
+        {heading}
+      </Heading>
+
+      <Heading size={isDesktop ? "md" : "sm"} color="gray.300">
+        {" "}
+        {info}
+      </Heading>
+    </Box>
+  );
+};
