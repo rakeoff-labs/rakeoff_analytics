@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Container,
   SimpleGrid,
@@ -6,47 +6,21 @@ import {
   Box,
   Heading,
 } from "@chakra-ui/react";
-import { getRakeoffStats, icpToDollars, e8sToIcp } from "./tools";
+
 import { boxBackgroundColor, boxBorderColor } from "./colors";
 
-const BottomStat = () => {
-  // RAKEOFF API //////
-  /////////////////
-
-  const [highestWinner, setHighestWinner] = useState(0);
-  const [higestPool, setHighestPool] = useState(0);
-  const [totalWinners, setTotalWinners] = useState(0);
-  const [avgWinner, setAverageWinner] = useState(0);
-  const [claimedICP, setClaimedICP] = useState(0);
-  const [totalClaims, setTotalClaims] = useState(0);
-
-  const fetchPrizeStat = async () => {
-    const getStat = await getRakeoffStats();
-
-    setHighestWinner(await icpToDollars(Number(getStat.highest_win_amount)));
-    setHighestPool(await icpToDollars(Number(getStat.highest_pool)));
-    setTotalWinners(getStat.total_winners_processed);
-
-    setAverageWinner(await icpToDollars(getStat.average_win_amount));
-    setClaimedICP(
-      Math.round(
-        e8sToIcp(Number(getStat.claimed_from_achievements))
-      ).toLocaleString()
-    );
-    setTotalClaims(
-      Math.round(Number(getStat.total_neurons_in_achievements)).toLocaleString()
-    );
-  };
-
-  useEffect(() => {
-    fetchPrizeStat();
-  });
-
+const BottomStat = ({
+  highestWinner,
+  higestPool,
+  totalWinners,
+  claimedICP,
+  totalClaim,
+}) => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
       <Heading
-        align="start"
+        textAlign={{ base: "center", lg: "start" }}
         size={{ base: "md", md: "lg" }}
         m={{ base: 6, md: 3 }}
         color="white"
@@ -57,7 +31,7 @@ const BottomStat = () => {
         gap={3}
         columns={[1, 1, 3]}
         spacing={{ base: 3, md: 4 }}
-        mx={{ base: 3, md: 3, lg: 0 }}
+        mx={{ base: 5, md: 5, lg: 0 }}
       >
         <StoryBoxAndImage
           isDesktop={isDesktop}
@@ -76,7 +50,7 @@ const BottomStat = () => {
         />
       </SimpleGrid>
       <Heading
-        align="start"
+        textAlign={{ base: "center", lg: "start" }}
         size={{ base: "md", md: "lg" }}
         m={{ base: 6, md: 3 }}
         color="white"
@@ -87,8 +61,8 @@ const BottomStat = () => {
       <SimpleGrid
         gap={3}
         columns={[2, 1, 2]}
+        mx={{ base: 5, md: 5, lg: 0 }}
         spacing={{ base: 3, md: 4 }}
-        mx={{ base: 3, md: 3, lg: 0 }}
       >
         <StoryBoxAndImage
           heading={claimedICP}
@@ -97,7 +71,7 @@ const BottomStat = () => {
         />
         <StoryBoxAndImage
           isDesktop={isDesktop}
-          heading={totalClaims}
+          heading={totalClaim}
           info="Total claims"
         />
       </SimpleGrid>

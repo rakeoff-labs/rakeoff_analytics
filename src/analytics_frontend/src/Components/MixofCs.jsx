@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Children } from "react";
+import React from "react";
 import {
   Box,
   Container,
@@ -10,15 +10,18 @@ import {
 import Navbar from "./Navbar";
 import Graph from "./Graph";
 
-import { getRakeoffStats, e8sToIcp, icpToDollars } from "./tools";
-
 export const boxBackgroundColor = "#292e40";
-const MixofCs = () => {
+const MixofCs = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
   return (
     <Box position="relative">
       <Box>
         <Navbar />
-        <Banner />
+        <Banner
+          icpStakers={icpStakers}
+          stakedAmount={stakedAmount}
+          icpFees={icpFees}
+          grabICP={grabICP}
+        />
       </Box>
       <Graph />
       <Box
@@ -34,7 +37,7 @@ const MixofCs = () => {
   );
 };
 export default MixofCs;
-const Banner = () => {
+const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
   return (
     <Container
       maxW="7xl"
@@ -42,75 +45,68 @@ const Banner = () => {
       bgGradient="linear(to-b, purple.800, white.300)"
       p={0}
     >
-      <Box align="start" m={{ base: 6, md: 3 }}>
-        <Heading size="2xl" mb={8}>
+      <Box align="start" m={{ base: 3, md: 3 }}>
+        <Heading
+          textAlign={{ base: "center", lg: "start" }}
+          size={{ base: "lg", lg: "2xl" }}
+          ml={{ base: 4, md: 0 }}
+          mb={8}
+        >
           RAKEOFF Analytics
         </Heading>
       </Box>
-      <Marketbox />
+      <Marketbox
+        icpStakers={icpStakers}
+        stakedAmount={stakedAmount}
+        icpFees={icpFees}
+        grabICP={grabICP}
+      />
     </Container>
   );
 };
 
-const Marketbox = () => {
-  const [icpStakers, setIcpStakers] = useState(0);
-  const [stakedAmount, setStakedAmount] = useState(0);
-  const [icpFees, setIcpFees] = useState(0);
-
-  const fetchStats = async () => {
-    const stat = await getRakeoffStats();
-
-    setIcpStakers(stat.total_stakers);
-    setStakedAmount(
-      Math.round(e8sToIcp(Number(stat.total_staked))).toLocaleString()
-    );
-    setIcpFees(await icpToDollars(Number(stat.fees_collected)));
-  };
-
-  useEffect(() => {
-    fetchStats();
-  });
-
-  const [grabICP, setGrabIcp] = useState(0);
-
-  useEffect(() => {
-    fetch(
-      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("API not working");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const price = data[0][4];
-
-        setGrabIcp(price);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch data:", error);
-      });
-  }, []);
-
+const Marketbox = ({ grabICP, icpStakers, stakedAmount, icpFees }) => {
   return (
     <SimpleGrid
-      columns={[1, 1]}
+      columns={1}
+      gap={2}
       spacing={{ base: 3, md: 1 }}
-      m={{ base: 6, md: 3 }}
+      m={{ base: 8, md: 4 }}
     >
       <Box>
-        <Flex direction="row" wrap="wrap" align="center">
-          <Text color="white" mr={3}>
+        <Flex
+          direction={{ base: "column", lg: "row" }}
+          wrap="wrap"
+          textAlign="center"
+        >
+          <Text
+            color="white"
+            ml={{ base: "8", lg: "0" }}
+            mr={{ base: "0", lg: "8" }}
+          >
             ICP price: ${grabICP.toFixed(2)}
           </Text>
-          <Text color="white" mr={3}>
+          <Text
+            color="white"
+            ml={{ base: "8", lg: "0" }}
+            mr={{ base: "0", lg: "8" }}
+          >
             Total Stakers: {icpStakers}
           </Text>
-          <Text color="white" mr={3}>
+          <Text
+            color="white"
+            ml={{ base: "8", lg: "0" }}
+            mr={{ base: "0", lg: "8" }}
+          >
             Staked Amount: {stakedAmount}
           </Text>
-          <Text color="white">Fees collected: {icpFees}</Text>
+          <Text
+            color="white"
+            ml={{ base: "8", lg: "0" }}
+            mr={{ base: "0", lg: "8" }}
+          >
+            Fees collected: {icpFees}
+          </Text>
         </Flex>
       </Box>
     </SimpleGrid>

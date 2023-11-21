@@ -27,8 +27,6 @@ import { boxBackgroundColor, boxBorderColor } from "./colors";
 import { getRakeoffStats, icpToDollars } from "./tools";
 
 export default function Graph() {
-  // RAKEOFF API ///
-  /////////////////
   const [graphData, setGraphData] = useState([]);
 
   const monthNamespool = [
@@ -65,8 +63,6 @@ export default function Graph() {
         0
       );
       const formattedTotalUsdAmount = `$${totalUsdAmount.toFixed(2)}`;
-
-      console.log(totalAmount);
 
       return {
         date: monthYear,
@@ -139,7 +135,6 @@ export default function Graph() {
     const gitHub = await res.json();
 
     const history = gitHub.data.repository.defaultBranchRef.target.history;
-    console.log(history);
     return history;
   };
   const [totalCommits, setTotalCommits] = useState(0);
@@ -254,7 +249,7 @@ export default function Graph() {
           gap={3}
           columns={[1, 1, 2]}
           spacing={{ base: 3, md: 8 }}
-          mx={{ base: 3, md: 3, lg: 0 }}
+          mx={{ base: 5, md: 5, lg: 0 }}
           templateAreas={[
             `"Poolhistory"
             "Githubcommits"
@@ -315,7 +310,7 @@ export default function Graph() {
           </Box>
           <Box gridArea="Githubcommits">
             <BoxLayout>
-              <Heading size="md" mb={2}>
+              <Heading color="gray.300" size="md" mb={2}>
                 Total commits to dApp:{" "}
                 <span mb={2} style={{ color: "white" }}>
                   {totalCommits}
@@ -346,7 +341,7 @@ export default function Graph() {
           </Box>
           <Box gridArea="Othergraph">
             <BoxLayout>
-              <Heading size="md" mb={2}>
+              <Heading size="md" color="gray.300" mb={2}>
                 Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
               </Heading>
               <BarChart
