@@ -5,3 +5,4 @@ export const boxBorderColor = "solid #363b4c 2px";
 export const boxFontColor = "#a5a8b6";
 export const RakeoffGrey = "#e2e2e2";
 export const RakeoffPurpleHue = "#9d5bc2";
+export const RakeoffWhite = "#FFFFFF";

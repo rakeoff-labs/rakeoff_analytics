@@ -217,7 +217,8 @@ export default function Graph() {
         return response.json();
       })
       .then((data) => {
-        const getDates = data.tvl.map((item) => {
+        const lastFiveDays = data.tvl.slice(-5);
+        const getDates = lastFiveDays.map((item) => {
           const date = new Date(item.date * 1000);
           const formattedDate = `${date.getDate()} ${date.toLocaleString(
             "default",
@@ -227,7 +228,7 @@ export default function Graph() {
 
           return {
             date: formattedDate,
-            tvl: item.totalLiquidityUSD, // Keep as a number for the Y-axis
+            tvl: item.totalLiquidityUSD,
             formattedTvl: formattedTvl,
           };
         });
@@ -244,143 +245,135 @@ export default function Graph() {
 
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
-      <Center>
-        <SimpleGrid
-          gap={3}
-          columns={[1, 1, 2]}
-          spacing={{ base: 3, md: 8 }}
-          mx={{ base: 5, md: 5, lg: 0 }}
-          templateAreas={[
-            `"Poolhistory"
+      <SimpleGrid
+        gap={3}
+        columns={[1, 1, 2]}
+        spacing={{ base: 3, md: 8 }}
+        mx={{ base: 5, md: 5, lg: 0 }}
+        templateAreas={[
+          `"Poolhistory"
             "Githubcommits"
             "Othergraph"`,
-            null,
-            `"Poolhistory Githubcommits"
+          null,
+          `"Poolhistory Githubcommits"
             "Poolhistory Othergraph"`,
-          ]}
-        >
-          <Box gridArea="Poolhistory">
-            <Box
-              bg={boxBackgroundColor}
-              border={boxBorderColor}
-              borderRadius="2xl"
-              py={18}
-              align="center"
-              m={2}
-              w="100%"
-              height={530}
+        ]}
+      >
+        <Box gridArea="Poolhistory">
+          <Box
+            bg={boxBackgroundColor}
+            border={boxBorderColor}
+            borderRadius="2xl"
+            py={18}
+            align="center"
+            m={2}
+            w="100%"
+            height={isDesktop ? 530 : 440}
+          >
+            <Heading size="md" color="#a5a8b6" mb={2}>
+              Total value locked:{" "}
+              <span style={{ color: "white" }}>{totalVal}</span>
+            </Heading>
+
+            <ResponsiveContainer
+              height={isDesktop ? 445 : 350}
+              width={isDesktop ? 600 : 280}
             >
-              <Heading size="md" color="gray.300" mb={2}>
-                Total value locked:{" "}
-                <span style={{ color: "white" }}>{totalVal}</span>
-              </Heading>
-
-              <ResponsiveContainer height={isDesktop ? 445 : 410} width="100%">
-                <AreaChart
-                  data={defiLama}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis
-                    type="number"
-                    domain={[0, 50000]}
-                    tickFormatter={(value) =>
-                      `$${Math.round(value).toLocaleString()}`
-                    }
-                  />
-
-                  <Area
-                    type="monotone"
-                    dataKey="tvl"
-                    stroke="#8884d8"
-                    fill="#8a2be2"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-              <Link
-                href="https://defillama.com/protocol/rakeoff"
-                ml={9}
-                isExternal
-              >
-                DefiLlama
-                <ExternalLinkIcon mx="3px" />
-              </Link>
-            </Box>
-          </Box>
-          <Box gridArea="Githubcommits">
-            <BoxLayout>
-              <Heading color="gray.300" size="md" mb={2}>
-                Total commits to dApp:{" "}
-                <span mb={2} style={{ color: "white" }}>
-                  {totalCommits}
-                </span>
-              </Heading>
-
-              <Center>
-                <LineChart
-                  mb={4}
-                  width={isDesktop ? 680 : 300} // anything greater pushes the mobile off
-                  height={200}
-                  data={chartData}
-                  align="center"
-                  margin={
-                    isDesktop
-                      ? { top: 15, right: 80, left: 30, bottom: 0 }
-                      : { top: 10, right: 80, left: 10, bottom: 0 }
-                  }
-                >
-                  <XAxis dataKey="month" />
-                  <YAxis />
-
-                  <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
-                  <Tooltip />
-                </LineChart>
-              </Center>
-            </BoxLayout>
-          </Box>
-          <Box gridArea="Othergraph">
-            <BoxLayout>
-              <Heading size="md" color="gray.300" mb={2}>
-                Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
-              </Heading>
-              <BarChart
-                width={isDesktop ? 700 : 240} // anything greater pushes the mobile off
-                height={200}
-                data={graphData}
-                margin={
-                  isDesktop
-                    ? { top: 10, right: 200, left: 0, bottom: 0 }
-                    : { top: 10, right: 80, left: 0, bottom: 0 }
-                }
-              >
+              <AreaChart data={defiLama}>
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
-                <YAxis tickFormatter={(value) => `$${value.toFixed(0)}`} />
-                <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
-              </BarChart>
-            </BoxLayout>
+                <YAxis
+                  type="number"
+                  domain={[0, 50000]}
+                  tickFormatter={(value) =>
+                    `$${
+                      value >= 1000
+                        ? `${(value / 1000).toFixed(0)}k`
+                        : value.toString()
+                    }`
+                  }
+                  width={50}
+                />
+
+                <Area
+                  type="monotone"
+                  dataKey="tvl"
+                  stroke="#8884d8"
+                  fill="#8a2be2"
+                />
+                <Tooltip />
+              </AreaChart>
+            </ResponsiveContainer>
+            <Link
+              href="https://defillama.com/protocol/rakeoff"
+              ml={9}
+              isExternal
+            >
+              DefiLlama
+              <ExternalLinkIcon mx="3px" />
+            </Link>
           </Box>
-        </SimpleGrid>
-      </Center>
+        </Box>
+        <Box gridArea="Githubcommits">
+          <BoxLayout>
+            <Heading color="#a5a8b6" size="md" mb={2}>
+              Total commits to dApp:{" "}
+              <span mb={2} style={{ color: "white" }}>
+                {totalCommits}
+              </span>
+            </Heading>
+            <Box m={3}>
+              <LineChart
+                mb={4}
+                width={isDesktop ? 580 : 260} // anything greater pushes the mobile off
+                height={200}
+                data={chartData}
+              >
+                <XAxis dataKey="month" />
+                <YAxis width={30} />
+
+                <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
+                <Tooltip />
+              </LineChart>
+            </Box>
+          </BoxLayout>
+        </Box>
+        <Box gridArea="Othergraph">
+          <BoxLayout>
+            <Heading size="md" color="#a5a8b6" mb={2}>
+              Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
+            </Heading>
+            <BarChart
+              width={isDesktop ? 580 : 260} // anything greater pushes the mobile off
+              height={200}
+              data={graphData}
+            >
+              <XAxis dataKey="date" />
+              <YAxis
+                width={35}
+                tickFormatter={(value) => `$${value.toFixed(0)}`}
+              />
+              <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
+            </BarChart>
+          </BoxLayout>
+        </Box>
+      </SimpleGrid>
     </Container>
   );
 }
 
-const BoxLayout = ({ heading, children }) => {
+const BoxLayout = ({ children }) => {
   return (
     <Box
       border={boxBorderColor}
       bg={boxBackgroundColor}
       borderRadius="2xl"
-      py={18}
       align="center"
       m={2}
       p={2}
       height={250}
       w="100%"
     >
-      <Heading size="md">{heading}</Heading>
-
       {children}
     </Box>
   );

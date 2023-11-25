@@ -13,6 +13,7 @@ const App = () => {
   const [claimedICP, setClaimedICP] = useState(0);
   const [totalClaim, setTotalClaims] = useState(0);
   const [grabICP, setGrabIcp] = useState(0);
+  const [getrewards, setTotalrewards] = useState(0);
 
   const fetchStats = async () => {
     const stats = await getRakeoffStats();
@@ -60,6 +61,7 @@ const App = () => {
             Number(stat.total_neurons_in_achievements)
           ).toLocaleString()
         );
+        setTotalrewards(await icpToDollars(Number(stat.total_rewarded)));
         setIcpFees(await icpToDollars(Number(stat.fees_collected)));
         setGrabIcp(getPrice.price);
       } catch (error) {
@@ -84,6 +86,7 @@ const App = () => {
         totalWinners={totalWinners}
         claimedICP={claimedICP}
         totalClaim={totalClaim}
+        getrewards={getrewards}
       />
       <Footer />
     </Box>

@@ -25,7 +25,12 @@ import {
   ExternalLinkIcon,
   HamburgerIcon,
 } from "@chakra-ui/icons";
-import { RakeoffPurpleHue, boxBackgroundColor, boxFontColor } from "./colors";
+import {
+  boxBackgroundColor,
+  RakeoffWhite,
+  RakeoffPurpleHue,
+  boxFontColor,
+} from "./colors";
 
 const Navbar = () => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
@@ -89,9 +94,9 @@ const Navbar = () => {
               target="_blank"
               bg={boxBackgroundColor}
               _hover={{
-                boxShadow: `0px 0px 10px 6px $white`,
+                boxShadow: `0px 0px 10px 6px ${RakeoffWhite}`,
               }}
-              boxShadow={`0px 0px 10px 3px white`}
+              boxShadow={`0px 0px 10px 3px ${RakeoffWhite}`}
               color="white"
             >
               Launch dApp

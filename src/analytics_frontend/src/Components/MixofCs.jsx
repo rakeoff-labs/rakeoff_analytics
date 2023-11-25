@@ -6,11 +6,14 @@ import {
   Text,
   Flex,
   SimpleGrid,
+  Stack,
+  useBreakpointValue,
+  HStack,
 } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import Graph from "./Graph";
+import { RakeoffGrey, boxBackgroundColor } from "./colors";
 
-export const boxBackgroundColor = "#292e40";
 const MixofCs = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
   return (
     <Box position="relative">
@@ -45,16 +48,28 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
       bgGradient="linear(to-b, purple.800, white.300)"
       p={0}
     >
-      <Box align="start" m={{ base: 3, md: 3 }}>
-        <Heading
-          textAlign={{ base: "center", lg: "start" }}
-          size={{ base: "lg", lg: "2xl" }}
-          ml={{ base: 4, md: 0 }}
-          mb={8}
-        >
-          RAKEOFF Analytics
-        </Heading>
-      </Box>
+      <Stack
+        h={"100%"}
+        align={{ base: "start", md: "start" }}
+        direction={{ base: "column", md: "row" }}
+      >
+        <Box mb={{ base: 0, md: 4 }} mt={{ base: 6, md: 0 }}>
+          <Flex align="center" gap={3}>
+            <Flex align="center">
+              <Heading color={"white"} size={{ base: "xl", md: "3xl" }}>
+                RAKE
+              </Heading>
+              <Heading color={RakeoffGrey} size={{ base: "xl", md: "3xl" }}>
+                OFF
+              </Heading>
+            </Flex>
+            <Heading color="white" size={{ base: "xl", md: "3xl" }}>
+              Analytics
+            </Heading>
+          </Flex>
+        </Box>
+      </Stack>
+
       <Marketbox
         icpStakers={icpStakers}
         stakedAmount={stakedAmount}
@@ -66,49 +81,21 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
 };
 
 const Marketbox = ({ grabICP, icpStakers, stakedAmount, icpFees }) => {
-  return (
-    <SimpleGrid
-      columns={1}
-      gap={2}
-      spacing={{ base: 3, md: 1 }}
-      m={{ base: 8, md: 4 }}
-    >
-      <Box>
-        <Flex
-          direction={{ base: "column", lg: "row" }}
-          wrap="wrap"
-          textAlign="center"
-        >
-          <Text
-            color="white"
-            ml={{ base: "8", lg: "0" }}
-            mr={{ base: "0", lg: "8" }}
-          >
-            ICP price: ${grabICP.toFixed(2)}
-          </Text>
-          <Text
-            color="white"
-            ml={{ base: "8", lg: "0" }}
-            mr={{ base: "0", lg: "8" }}
-          >
-            Total Stakers: {icpStakers}
-          </Text>
-          <Text
-            color="white"
-            ml={{ base: "8", lg: "0" }}
-            mr={{ base: "0", lg: "8" }}
-          >
-            Staked Amount: {stakedAmount}
-          </Text>
-          <Text
-            color="white"
-            ml={{ base: "8", lg: "0" }}
-            mr={{ base: "0", lg: "8" }}
-          >
-            Fees collected: {icpFees}
-          </Text>
-        </Flex>
-      </Box>
+  const isDesktop = useBreakpointValue({ base: false, md: true });
+
+  return isDesktop ? (
+    <HStack spacing={8} mb="4" mt={3}>
+      <Text>ICP price: ${grabICP.toFixed(2)}</Text>
+      <Text>Total Stakers: {icpStakers}</Text>
+      <Text>ICP Staked: {stakedAmount}</Text>
+      <Text>Fees collected: {icpFees}</Text>
+    </HStack>
+  ) : (
+    <SimpleGrid columns={2} spacing={2} mt={3}>
+      <Text>ICP price: ${grabICP.toFixed(2)}</Text>
+      <Text>Total Stakers: {icpStakers}</Text>
+      <Text>ICP Staked: {stakedAmount}</Text>
+      <Text>Fees collected: {icpFees}</Text>
     </SimpleGrid>
   );
 };

@@ -5,6 +5,7 @@ import {
   useBreakpointValue,
   Box,
   Heading,
+  Text,
 } from "@chakra-ui/react";
 
 import { boxBackgroundColor, boxBorderColor } from "./colors";
@@ -15,33 +16,39 @@ const BottomStat = ({
   totalWinners,
   claimedICP,
   totalClaim,
+  getrewards,
 }) => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
       <Heading
-        textAlign={{ base: "center", lg: "start" }}
+        textAlign="start"
         size={{ base: "md", md: "lg" }}
-        m={{ base: 6, md: 3 }}
+        m={{ base: 3, md: 3 }}
         color="white"
       >
         ICP Pools
       </Heading>
       <SimpleGrid
         gap={3}
-        columns={[1, 1, 3]}
-        spacing={{ base: 3, md: 4 }}
+        columns={[2, 1, 4]}
+        spacing={{ base: 1, md: 4 }}
         mx={{ base: 5, md: 5, lg: 0 }}
       >
         <StoryBoxAndImage
           isDesktop={isDesktop}
+          heading={getrewards}
+          info="Total rewards"
+        />
+        <StoryBoxAndImage
+          isDesktop={isDesktop}
           heading={highestWinner}
-          info="Highest prize won"
+          info="Highest prize"
         />
         <StoryBoxAndImage
           isDesktop={isDesktop}
           heading={higestPool}
-          info="Highest pool"
+          info="Largest pool"
         />
         <StoryBoxAndImage
           isDesktop={isDesktop}
@@ -50,9 +57,9 @@ const BottomStat = ({
         />
       </SimpleGrid>
       <Heading
-        textAlign={{ base: "center", lg: "start" }}
+        textAlign="start"
         size={{ base: "md", md: "lg" }}
-        m={{ base: 6, md: 3 }}
+        m={{ base: 3, md: 3 }}
         color="white"
       >
         ICP Bonuses
@@ -62,12 +69,12 @@ const BottomStat = ({
         gap={3}
         columns={[2, 1, 2]}
         mx={{ base: 5, md: 5, lg: 0 }}
-        spacing={{ base: 3, md: 4 }}
+        spacing={{ base: 1, md: 4 }}
       >
         <StoryBoxAndImage
           heading={claimedICP}
           isDesktop={isDesktop}
-          info=" ICP bonuses claimed"
+          info=" ICP claimed"
         />
         <StoryBoxAndImage
           isDesktop={isDesktop}
@@ -86,7 +93,6 @@ const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
       bg={boxBackgroundColor}
       border={boxBorderColor}
       borderRadius="2xl"
-      py={18}
       align="center"
       m={2}
       p={6}
@@ -102,9 +108,7 @@ const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
         {heading}
       </Heading>
 
-      <Heading size={isDesktop ? "md" : "md"} color="gray.300">
-        {info}
-      </Heading>
+      <Text color="#a5a8b6">{info}</Text>
     </Box>
   );
 };
