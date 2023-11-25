@@ -18,7 +18,6 @@ import {
   Heading,
   SimpleGrid,
   useBreakpointValue,
-  Center,
   Link,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
@@ -55,15 +54,6 @@ export default function Graph() {
       // Convert the formatted currency string to a number
       usdAmount = Number(usdAmount.replace(/[^0-9.-]+/g, ""));
 
-      const numDigits = Math.ceil(Math.log10(usdAmount + 1));
-      //rounding to show two digit
-      const totalAmount = Math.floor(usdAmount / Math.pow(10, numDigits - 2));
-      const totalUsdAmount = graphData.reduce(
-        (acc, item) => acc + item.amount,
-        0
-      );
-      const formattedTotalUsdAmount = `$${totalUsdAmount.toFixed(2)}`;
-
       return {
         date: monthYear,
         amount: usdAmount,
@@ -71,9 +61,15 @@ export default function Graph() {
     });
     const formattedData = await Promise.all(dataPromises);
 
-    // Showing several months since we dont have all the history
-    const allMonths = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
-    const baseData = allMonths.map((month) => ({ date: month, amount: "$0" }));
+    // using slice here and to get the particular months from Nov.
+    //concat is merging the two differenct slices together, since we want to get it from Nov to Apr
+    const selectedMonths = monthNamespool
+      .slice(10, 12)
+      .concat(monthNamespool.slice(0, 4));
+    const baseData = selectedMonths.map((month) => ({
+      date: month,
+      amount: "$0",
+    }));
 
     // Merge actual data with base data
     const mergedData = baseData.map((baseItem) => {
@@ -151,30 +147,16 @@ export default function Graph() {
         console.error(error);
       });
   }, []);
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
 
   // Aggregates commits each month///
   /////////////////
-  const aggregateCommitsByMonth = (edges, monthNames) => {
+  const aggregateCommitsByMonth = (edges, monthNamespool) => {
     const commitCountsByMonth = {};
 
     edges.forEach(({ node: { committedDate } }) => {
       const date = new Date(committedDate);
       const monthIndex = date.getMonth();
-      const yearMonth = `${monthNames[monthIndex]}`;
+      const yearMonth = `${monthNamespool[monthIndex]}`;
 
       if (!commitCountsByMonth[yearMonth]) {
         commitCountsByMonth[yearMonth] = 0;
@@ -197,7 +179,7 @@ export default function Graph() {
     if (detailCommit.length > 0) {
       const processedChartData = aggregateCommitsByMonth(
         detailCommit,
-        monthNames
+        monthNamespool
       );
       setChartData(processedChartData);
     }
@@ -325,7 +307,7 @@ export default function Graph() {
             <Box m={3}>
               <LineChart
                 mb={4}
-                width={isDesktop ? 580 : 260} // anything greater pushes the mobile off
+                width={isDesktop ? 580 : 260}
                 height={200}
                 data={chartData}
               >
@@ -344,7 +326,7 @@ export default function Graph() {
               Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
             </Heading>
             <BarChart
-              width={isDesktop ? 580 : 260} // anything greater pushes the mobile off
+              width={isDesktop ? 580 : 260}
               height={200}
               data={graphData}
             >

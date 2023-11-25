@@ -1,69 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { MixofCs, Footer, BottomStat } from "./Components";
-import { getRakeoffStats, e8sToIcp, icpToDollars } from "./Components/tools";
+import {
+  getRakeoffStats,
+  e8sToIcp,
+  icpToDollars,
+  GrabIcpPrice,
+} from "./Components/tools";
 
 const App = () => {
-  const [icpStakers, setIcpStakers] = useState(0);
-  const [stakedAmount, setStakedAmount] = useState(0);
-  const [icpFees, setIcpFees] = useState(0);
-  const [highestWinner, setHighestWinner] = useState(0);
-  const [higestPool, setHighestPool] = useState(0);
-  const [totalWinners, setTotalWinners] = useState(0);
-  const [claimedICP, setClaimedICP] = useState(0);
-  const [totalClaim, setTotalClaims] = useState(0);
+  // in order to use the await to grab the function to fetch dollar prices
+  const [rakeoffStats, setRakeoffStats] = useState({
+    icpStakers: 0,
+    stakedAmount: 0,
+    icpFees: 0,
+    highestWinner: 0,
+    highestPool: 0,
+    totalWinners: 0,
+    claimedICP: 0,
+    totalClaim: 0,
+    grabICP: 0,
+    getrewards: 0,
+  });
   const [grabICP, setGrabIcp] = useState(0);
-  const [getrewards, setTotalrewards] = useState(0);
 
   const fetchStats = async () => {
     const stats = await getRakeoffStats();
     return stats;
-  };
-  const GrabIcpPrice = async () => {
-    fetch(
-      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("API not working");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const price = data[0][4];
-
-        setGrabIcp(price);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch data:", error);
-      });
   };
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         const stat = await fetchStats();
-        const getPrice = await GrabIcpPrice();
-        setIcpStakers(stat.total_stakers);
-        setStakedAmount(
-          Math.round(e8sToIcp(Number(stat.total_staked))).toLocaleString()
-        );
-        setHighestWinner(await icpToDollars(Number(stat.highest_win_amount)));
-        setHighestPool(await icpToDollars(Number(stat.highest_pool)));
-        setTotalWinners(stat.total_winners_processed);
-        setClaimedICP(
-          Math.round(
+        const icpPrice = await GrabIcpPrice();
+        setGrabIcp(icpPrice);
+        setRakeoffStats({
+          icpStakers: stat.total_stakers,
+          stakedAmount: Math.round(
+            e8sToIcp(Number(stat.total_staked))
+          ).toLocaleString(),
+          highestWinner: await icpToDollars(Number(stat.highest_win_amount)),
+          highestPool: await icpToDollars(Number(stat.highest_pool)),
+          totalWinners: stat.total_winners_processed,
+          claimedICP: Math.round(
             e8sToIcp(Number(stat.claimed_from_achievements))
-          ).toLocaleString()
-        );
-        setTotalClaims(
-          Math.round(
+          ).toLocaleString(),
+          totalClaim: Math.round(
             Number(stat.total_neurons_in_achievements)
-          ).toLocaleString()
-        );
-        setTotalrewards(await icpToDollars(Number(stat.total_rewarded)));
-        setIcpFees(await icpToDollars(Number(stat.fees_collected)));
-        setGrabIcp(getPrice.price);
+          ).toLocaleString(),
+          getrewards: await icpToDollars(Number(stat.total_rewarded)),
+          icpFees: await icpToDollars(Number(stat.fees_collected)),
+        });
       } catch (error) {
         console.log("error", error);
       }
@@ -75,18 +63,18 @@ const App = () => {
   return (
     <Box>
       <MixofCs
-        icpStakers={icpStakers}
-        stakedAmount={stakedAmount}
-        icpFees={icpFees}
+        icpStakers={rakeoffStats.icpStakers}
+        stakedAmount={rakeoffStats.stakedAmount}
+        icpFees={rakeoffStats.icpFees}
         grabICP={grabICP}
       />
       <BottomStat
-        higestPool={higestPool}
-        highestWinner={highestWinner}
-        totalWinners={totalWinners}
-        claimedICP={claimedICP}
-        totalClaim={totalClaim}
-        getrewards={getrewards}
+        higestPool={rakeoffStats.highestPool}
+        highestWinner={rakeoffStats.highestWinner}
+        totalWinners={rakeoffStats.totalWinners}
+        claimedICP={rakeoffStats.claimedICP}
+        totalClaim={rakeoffStats.totalClaim}
+        getrewards={rakeoffStats.getrewards}
       />
       <Footer />
     </Box>

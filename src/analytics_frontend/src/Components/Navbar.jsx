@@ -25,12 +25,7 @@ import {
   ExternalLinkIcon,
   HamburgerIcon,
 } from "@chakra-ui/icons";
-import {
-  boxBackgroundColor,
-  RakeoffWhite,
-  RakeoffPurpleHue,
-  boxFontColor,
-} from "./colors";
+import { boxBackgroundColor, RakeoffWhite, boxFontColor } from "./colors";
 
 const Navbar = () => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });

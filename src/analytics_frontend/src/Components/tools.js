@@ -48,3 +48,19 @@ export const icpToDollars = async (e8sIcp) => {
     return "$0.00";
   }
 };
+export const GrabIcpPrice = async () => {
+  try {
+    const response = await fetch(
+      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
+    );
+    if (!response.ok) {
+      throw new Error("API not working");
+    }
+    const data = await response.json();
+    const price = data[0][4]; // Assuming this is the correct path to the price
+    return price; // Return the price
+  } catch (error) {
+    console.error("Failed to fetch data:", error);
+    return null; // Return null or some default value in case of an error
+  }
+};

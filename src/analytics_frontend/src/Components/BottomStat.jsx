@@ -7,9 +7,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-
 import { boxBackgroundColor, boxBorderColor } from "./colors";
-
 const BottomStat = ({
   highestWinner,
   higestPool,

@@ -14,7 +14,14 @@ import Navbar from "./Navbar";
 import Graph from "./Graph";
 import { RakeoffGrey, boxBackgroundColor } from "./colors";
 
-const MixofCs = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
+const MixofCs = ({
+  icpStakers,
+  stakedAmount,
+  icpFees,
+  grabICP,
+  totalCommits,
+  chartData,
+}) => {
   return (
     <Box position="relative">
       <Box>
@@ -26,7 +33,7 @@ const MixofCs = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
           grabICP={grabICP}
         />
       </Box>
-      <Graph />
+      <Graph totalCommits={totalCommits} chartData={chartData} />
       <Box
         position="absolute"
         top="0"
@@ -44,7 +51,7 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
   return (
     <Container
       maxW="7xl"
-      mt={{ base: 12, md: "5rem" }}
+      mt={{ base: 6, md: "5rem" }}
       bgGradient="linear(to-b, purple.800, white.300)"
       p={0}
     >
@@ -53,7 +60,11 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
         align={{ base: "start", md: "start" }}
         direction={{ base: "column", md: "row" }}
       >
-        <Box mb={{ base: 0, md: 4 }} mt={{ base: 6, md: 0 }}>
+        <Box
+          mb={{ base: 0, md: 4 }}
+          ml={{ base: 4, md: 3 }}
+          mt={{ base: 6, md: 0 }}
+        >
           <Flex align="center" gap={3}>
             <Flex align="center">
               <Heading color={"white"} size={{ base: "xl", md: "3xl" }}>
@@ -84,15 +95,15 @@ const Marketbox = ({ grabICP, icpStakers, stakedAmount, icpFees }) => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
   return isDesktop ? (
-    <HStack spacing={8} mb="4" mt={3}>
+    <HStack spacing={8} mb={6} ml={3} mt={3}>
       <Text>ICP price: ${grabICP.toFixed(2)}</Text>
       <Text>Total Stakers: {icpStakers}</Text>
       <Text>ICP Staked: {stakedAmount}</Text>
       <Text>Fees collected: {icpFees}</Text>
     </HStack>
   ) : (
-    <SimpleGrid columns={2} spacing={2} mt={3}>
-      <Text>ICP price: ${grabICP.toFixed(2)}</Text>
+    <SimpleGrid columns={2} ml={4} mb={6} spacing={2} mt={3}>
+      <Text>ICP price: ${grabICP}</Text>
       <Text>Total Stakers: {icpStakers}</Text>
       <Text>ICP Staked: {stakedAmount}</Text>
       <Text>Fees collected: {icpFees}</Text>

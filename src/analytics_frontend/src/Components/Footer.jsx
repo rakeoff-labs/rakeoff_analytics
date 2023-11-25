@@ -5,9 +5,7 @@ import {
   Stack,
   useColorModeValue,
   Image as ChakraImage,
-  Center,
   Flex,
-  Heading,
 } from "@chakra-ui/react";
 import logowhitepurple from "../../assets/rakeoff_logo_name_white_purple.svg";
 import githubwhite from "../../assets/github_white.png";
