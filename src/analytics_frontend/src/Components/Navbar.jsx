@@ -25,7 +25,7 @@ import {
   ExternalLinkIcon,
   HamburgerIcon,
 } from "@chakra-ui/icons";
-import { boxBackgroundColor, RakeoffWhite, boxFontColor } from "./colors";
+import { boxBackgroundColor, boxFontColor, RakeoffPurpleHue } from "./colors";
 
 const Navbar = () => {
   const isDesktop = useBreakpointValue({ base: false, lg: true });
@@ -89,9 +89,9 @@ const Navbar = () => {
               target="_blank"
               bg={boxBackgroundColor}
               _hover={{
-                boxShadow: `0px 0px 10px 6px ${RakeoffWhite}`,
+                boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
               }}
-              boxShadow={`0px 0px 10px 3px ${RakeoffWhite}`}
+              boxShadow={`0px 0px 10px 3px ${RakeoffPurpleHue}`}
               color="white"
             >
               Launch dApp
@@ -117,9 +117,9 @@ const MobileMenu = () => {
         onClick={onOpen}
         bg={boxBackgroundColor}
         _hover={{
-          boxShadow: `0px 0px 10px 6px white`,
+          boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
         }}
-        boxShadow={`0px 0px 10px 3px white`}
+        boxShadow={`0px 0px 10px 3px ${RakeoffPurpleHue}`}
         color="white"
       />
       <Drawer onClose={onClose} isOpen={isOpen}>
@@ -181,9 +181,9 @@ const MobileMenu = () => {
                 size="lg"
                 bg={boxBackgroundColor}
                 _hover={{
-                  boxShadow: `0px 0px 10px 6px white`,
+                  boxShadow: `0px 0px 10px 6px ${RakeoffPurpleHue}`,
                 }}
-                boxShadow={`0px 0px 10px 3px white`}
+                boxShadow={`0px 0px 10px 3px ${RakeoffPurpleHue}`}
                 color="white"
                 w="100%"
               >

@@ -6,9 +6,6 @@ import {
   Text,
   Flex,
   SimpleGrid,
-  Stack,
-  useBreakpointValue,
-  HStack,
 } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import Graph from "./Graph";
@@ -19,21 +16,24 @@ const MixofCs = ({
   stakedAmount,
   icpFees,
   grabICP,
-  totalCommits,
-  chartData,
+  tvlChartData,
+  commitsChartData,
+  poolHistoryChartData,
 }) => {
   return (
     <Box position="relative">
-      <Box>
-        <Navbar />
-        <Banner
-          icpStakers={icpStakers}
-          stakedAmount={stakedAmount}
-          icpFees={icpFees}
-          grabICP={grabICP}
-        />
-      </Box>
-      <Graph totalCommits={totalCommits} chartData={chartData} />
+      <Navbar />
+      <Banner
+        icpStakers={icpStakers}
+        stakedAmount={stakedAmount}
+        icpFees={icpFees}
+        grabICP={grabICP}
+      />
+      <Graph
+        tvlChartData={tvlChartData}
+        commitsChartData={commitsChartData}
+        poolHistoryChartData={poolHistoryChartData}
+      />
       <Box
         position="absolute"
         top="0"
@@ -46,67 +46,54 @@ const MixofCs = ({
     </Box>
   );
 };
+
 export default MixofCs;
+
 const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
   return (
     <Container
       maxW="7xl"
       mt={{ base: 6, md: "5rem" }}
       bgGradient="linear(to-b, purple.800, white.300)"
-      p={0}
     >
-      <Stack
-        h={"100%"}
-        align={{ base: "start", md: "start" }}
-        direction={{ base: "column", md: "row" }}
-      >
-        <Box
-          mb={{ base: 0, md: 4 }}
-          ml={{ base: 4, md: 3 }}
-          mt={{ base: 6, md: 0 }}
-        >
-          <Flex align="center" gap={3}>
-            <Flex align="center">
-              <Heading color={"white"} size={{ base: "xl", md: "3xl" }}>
-                RAKE
-              </Heading>
-              <Heading color={RakeoffGrey} size={{ base: "xl", md: "3xl" }}>
-                OFF
-              </Heading>
-            </Flex>
-            <Heading color="white" size={{ base: "xl", md: "3xl" }}>
-              Analytics
+      <Box mt={{ base: 6, md: 0 }}>
+        <Flex align="center" gap={3}>
+          <Flex align="center">
+            <Heading color={"white"} size={{ base: "2xl", md: "3xl" }}>
+              RAKE
+            </Heading>
+            <Heading color={RakeoffGrey} size={{ base: "2xl", md: "3xl" }}>
+              OFF
             </Heading>
           </Flex>
-        </Box>
-      </Stack>
+          <Heading color="white" size={{ base: "2xl", md: "3xl" }}>
+            Analytics
+          </Heading>
+        </Flex>
+      </Box>
 
-      <Marketbox
-        icpStakers={icpStakers}
-        stakedAmount={stakedAmount}
-        icpFees={icpFees}
-        grabICP={grabICP}
-      />
+      <SimpleGrid
+        columns={[2, 4, 4]}
+        gap={1}
+        w={{ base: "90%", md: "50%" }}
+        my={6}
+      >
+        <StatItem title={"ICP price"} stat={`$${grabICP}`} />
+        <StatItem title={"Total Stakers"} stat={icpStakers} />
+        <StatItem title={"ICP staked"} stat={stakedAmount} />
+        <StatItem title={"Fees collected"} stat={icpFees} />
+      </SimpleGrid>
     </Container>
   );
 };
 
-const Marketbox = ({ grabICP, icpStakers, stakedAmount, icpFees }) => {
-  const isDesktop = useBreakpointValue({ base: false, md: true });
-
-  return isDesktop ? (
-    <HStack spacing={8} mb={6} ml={3} mt={3}>
-      <Text>ICP price: ${grabICP.toFixed(2)}</Text>
-      <Text>Total Stakers: {icpStakers}</Text>
-      <Text>ICP Staked: {stakedAmount}</Text>
-      <Text>Fees collected: {icpFees}</Text>
-    </HStack>
-  ) : (
-    <SimpleGrid columns={2} ml={4} mb={6} spacing={2} mt={3}>
-      <Text>ICP price: ${grabICP}</Text>
-      <Text>Total Stakers: {icpStakers}</Text>
-      <Text>ICP Staked: {stakedAmount}</Text>
-      <Text>Fees collected: {icpFees}</Text>
-    </SimpleGrid>
+const StatItem = ({ title, stat }) => {
+  return (
+    <Flex justify="start" align="center" gap={1}>
+      <Text color="white" noOfLines={1}>{title}:</Text>
+      <Text fontWeight={500} color="white">
+        {stat}
+      </Text>
+    </Flex>
   );
 };

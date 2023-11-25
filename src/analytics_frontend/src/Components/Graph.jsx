@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   XAxis,
   Bar,
@@ -7,7 +7,6 @@ import {
   Line,
   Tooltip,
   CartesianGrid,
-  ResponsiveContainer,
   AreaChart,
   Area,
   BarChart,
@@ -15,348 +14,226 @@ import {
 import {
   Box,
   Container,
-  Heading,
   SimpleGrid,
   useBreakpointValue,
-  Link,
+  Flex,
+  Text,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-
 import { boxBackgroundColor, boxBorderColor } from "./colors";
-import { getRakeoffStats, icpToDollars } from "./tools";
+import { e8sToIcp } from "./tools";
+import moment from "moment";
 
-export default function Graph() {
-  const [graphData, setGraphData] = useState([]);
-
-  const monthNamespool = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const getGraphData = async () => {
-    const getGraph = await getRakeoffStats();
-    // filtering though the history using map
-    const dataPromises = getGraph.pool_history_chart_data.map(async (item) => {
-      const date = new Date(item.timestamp / 1000000);
-      const monthYear = monthNamespool[date.getMonth()];
-      let usdAmount = await icpToDollars(item.amount); // Convert to USD
-
-      // Convert the formatted currency string to a number
-      usdAmount = Number(usdAmount.replace(/[^0-9.-]+/g, ""));
-
-      return {
-        date: monthYear,
-        amount: usdAmount,
-      };
-    });
-    const formattedData = await Promise.all(dataPromises);
-
-    // using slice here and to get the particular months from Nov.
-    //concat is merging the two differenct slices together, since we want to get it from Nov to Apr
-    const selectedMonths = monthNamespool
-      .slice(10, 12)
-      .concat(monthNamespool.slice(0, 4));
-    const baseData = selectedMonths.map((month) => ({
-      date: month,
-      amount: "$0",
-    }));
-
-    // Merge actual data with base data
-    const mergedData = baseData.map((baseItem) => {
-      const actualItem = formattedData.find(
-        (item) => item.date === baseItem.date
-      );
-      return actualItem || baseItem;
-    });
-
-    setGraphData(mergedData);
-  };
-
-  useEffect(() => {
-    getGraphData();
-  }, []); //
-
-  // GITHUB API ///
-  /////////////////
-
-  const GraphQl = async () => {
-    const query = `
-  query ($orgName: String!, $repoName: String!) {
-      repository(owner: $orgName, name: $repoName) {
-        defaultBranchRef {
-          target {
-            ... on Commit {
-              history {
-                totalCount
-                edges {
-                  node {
-                    committedDate
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-    const token = process.env.REACT_APP_GITHUB_TOKEN;
-    const variables = {
-      orgName: "rakeoff-labs",
-      repoName: "rakeoff",
-    };
-
-    const body = {
-      query,
-      variables,
-    };
-    const res = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
-    const gitHub = await res.json();
-
-    const history = gitHub.data.repository.defaultBranchRef.target.history;
-    return history;
-  };
-  const [totalCommits, setTotalCommits] = useState(0);
-  const [detailCommit, setDetailCommit] = useState([]);
-  const [chartData, setChartData] = useState([]);
-
-  useEffect(() => {
-    GraphQl()
-      .then((history) => {
-        setTotalCommits(history.totalCount);
-        setDetailCommit(history.edges);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  // Aggregates commits each month///
-  /////////////////
-  const aggregateCommitsByMonth = (edges, monthNamespool) => {
-    const commitCountsByMonth = {};
-
-    edges.forEach(({ node: { committedDate } }) => {
-      const date = new Date(committedDate);
-      const monthIndex = date.getMonth();
-      const yearMonth = `${monthNamespool[monthIndex]}`;
-
-      if (!commitCountsByMonth[yearMonth]) {
-        commitCountsByMonth[yearMonth] = 0;
-      }
-      commitCountsByMonth[yearMonth]++;
-    });
-
-    return (
-      Object.keys(commitCountsByMonth)
-        // maps to check the months of commits
-        .map((month) => ({
-          month,
-          commits: commitCountsByMonth[month],
-        }))
-        .reverse()
-    );
-  };
-
-  useEffect(() => {
-    if (detailCommit.length > 0) {
-      const processedChartData = aggregateCommitsByMonth(
-        detailCommit,
-        monthNamespool
-      );
-      setChartData(processedChartData);
-    }
-  }, [detailCommit]);
-
-  const isDesktop = useBreakpointValue({ base: false, lg: true });
-
-  const [defiLama, setDefiLama] = useState([]);
-  const [totalVal, setTotalVal] = useState(0);
-
-  useEffect(() => {
-    fetch("https://api.llama.fi/protocol/rakeoff")
-      .then((response) => {
-        if (!response) {
-          throw new Error("no API");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const lastFiveDays = data.tvl.slice(-5);
-        const getDates = lastFiveDays.map((item) => {
-          const date = new Date(item.date * 1000);
-          const formattedDate = `${date.getDate()} ${date.toLocaleString(
-            "default",
-            { month: "short" }
-          )}`;
-          const formattedTvl = `$${item.totalLiquidityUSD.toLocaleString()}`;
-
-          return {
-            date: formattedDate,
-            tvl: item.totalLiquidityUSD,
-            formattedTvl: formattedTvl,
-          };
-        });
-        const mostRecentTvl = data.tvl[data.tvl.length - 1]?.totalLiquidityUSD;
-        const roundedTotal = Math.round(mostRecentTvl);
-        const formattedTotal = `$${roundedTotal.toLocaleString()}`;
-        setDefiLama(getDates);
-        setTotalVal(formattedTotal);
-      })
-      .catch((error) => {
-        console.error("catched error", error);
-      });
-  }, []);
-
+export default function Graph({
+  tvlChartData,
+  commitsChartData,
+  poolHistoryChartData,
+}) {
   return (
-    <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
+    <Container maxW="7xl" mt={{ base: 3, md: 1 }}>
       <SimpleGrid
         gap={3}
         columns={[1, 1, 2]}
         spacing={{ base: 3, md: 8 }}
-        mx={{ base: 5, md: 5, lg: 0 }}
         templateAreas={[
-          `"Poolhistory"
+          `"Tvl"
             "Githubcommits"
-            "Othergraph"`,
+            "PoolHistory"`,
           null,
-          `"Poolhistory Githubcommits"
-            "Poolhistory Othergraph"`,
+          `"Tvl Githubcommits"
+            "Tvl PoolHistory"`,
         ]}
       >
-        <Box gridArea="Poolhistory">
-          <Box
-            bg={boxBackgroundColor}
-            border={boxBorderColor}
-            borderRadius="2xl"
-            py={18}
-            align="center"
-            m={2}
-            w="100%"
-            height={isDesktop ? 530 : 440}
-          >
-            <Heading size="md" color="#a5a8b6" mb={2}>
-              Total value locked:{" "}
-              <span style={{ color: "white" }}>{totalVal}</span>
-            </Heading>
-
-            <ResponsiveContainer
-              height={isDesktop ? 445 : 350}
-              width={isDesktop ? 600 : 280}
-            >
-              <AreaChart data={defiLama}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis
-                  type="number"
-                  domain={[0, 50000]}
-                  tickFormatter={(value) =>
-                    `$${
-                      value >= 1000
-                        ? `${(value / 1000).toFixed(0)}k`
-                        : value.toString()
-                    }`
-                  }
-                  width={50}
-                />
-
-                <Area
-                  type="monotone"
-                  dataKey="tvl"
-                  stroke="#8884d8"
-                  fill="#8a2be2"
-                />
-                <Tooltip />
-              </AreaChart>
-            </ResponsiveContainer>
-            <Link
-              href="https://defillama.com/protocol/rakeoff"
-              ml={9}
-              isExternal
-            >
-              DefiLlama
-              <ExternalLinkIcon mx="3px" />
-            </Link>
-          </Box>
-        </Box>
-        <Box gridArea="Githubcommits">
-          <BoxLayout>
-            <Heading color="#a5a8b6" size="md" mb={2}>
-              Total commits to dApp:{" "}
-              <span mb={2} style={{ color: "white" }}>
-                {totalCommits}
-              </span>
-            </Heading>
-            <Box m={3}>
-              <LineChart
-                mb={4}
-                width={isDesktop ? 580 : 260}
-                height={200}
-                data={chartData}
-              >
-                <XAxis dataKey="month" />
-                <YAxis width={30} />
-
-                <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
-                <Tooltip />
-              </LineChart>
-            </Box>
-          </BoxLayout>
-        </Box>
-        <Box gridArea="Othergraph">
-          <BoxLayout>
-            <Heading size="md" color="#a5a8b6" mb={2}>
-              Pool history <span mb={2} style={{ color: "#8a2be2" }}></span>
-            </Heading>
-            <BarChart
-              width={isDesktop ? 580 : 260}
-              height={200}
-              data={graphData}
-            >
-              <XAxis dataKey="date" />
-              <YAxis
-                width={35}
-                tickFormatter={(value) => `$${value.toFixed(0)}`}
-              />
-              <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
-            </BarChart>
-          </BoxLayout>
-        </Box>
+        <PoolHistoryBarChart poolHistoryChartData={poolHistoryChartData} />
+        <TvlChart tvlChartData={tvlChartData} />
+        <CommitLineChart commitsChartData={commitsChartData} />
       </SimpleGrid>
     </Container>
   );
 }
 
-const BoxLayout = ({ children }) => {
+const TvlChart = ({ tvlChartData }) => {
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
+
+  const formattedData = tvlChartData.tvl.map((item) => {
+    return {
+      date: moment.unix(item.date).format("MMM DD"),
+      usd: item.totalLiquidityUSD.toFixed(2),
+    };
+  });
+
   return (
-    <Box
-      border={boxBorderColor}
-      bg={boxBackgroundColor}
-      borderRadius="2xl"
-      align="center"
-      m={2}
-      p={2}
-      height={250}
-      w="100%"
-    >
-      {children}
+    <Box gridArea="Tvl">
+      <Box
+        bg={boxBackgroundColor}
+        border={boxBorderColor}
+        borderRadius="2xl"
+        align="center"
+        p={3}
+        w="100%"
+      >
+        <Flex justify="center" mb={3} align="center" gap={1}>
+          <Text color="#a5a8b6">Total value locked:</Text>
+          <Text fontWeight={500} color="white">
+            $
+            {Math.round(
+              tvlChartData.tvl[tvlChartData.tvl.length - 1].totalLiquidityUSD
+            ).toLocaleString("en-US")}
+          </Text>
+        </Flex>
+        <AreaChart
+          data={formattedData}
+          width={isDesktop ? 580 : 300}
+          height={isDesktop ? 450 : 350}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis
+            type="number"
+            tickFormatter={(value) =>
+              `$${
+                value >= 1000
+                  ? `${(value / 1000).toFixed(0)}k`
+                  : value.toString()
+              }`
+            }
+            width={30}
+          />
+
+          <Area type="monotone" dataKey="usd" stroke="#8884d8" fill="#8a2be2" />
+          <Tooltip />
+        </AreaChart>
+        <Flex align="center" gap={1} justify="center">
+          <Text color="#a5a8b6">Source:</Text>
+          <Text
+            as="a"
+            href="https://defillama.com/protocol/rakeoff"
+            target="_blank"
+            color={"white"}
+            _hover={{ opacity: "0.8", cursor: "pointer" }}
+            fontWeight={500}
+          >
+            DefiLlama <ExternalLinkIcon mb={1} />
+          </Text>
+        </Flex>
+      </Box>
+    </Box>
+  );
+};
+
+const CommitLineChart = ({ commitsChartData }) => {
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
+
+  const commitsByMonth = commitsChartData.edges.reduce(
+    (acc, { node: { committedDate } }) => {
+      // Format the date to a 'Month Year' format using Moment.js
+      const monthYear = moment(committedDate).format("MMM YY");
+
+      // If this month-year combination is already in the accumulator, increment its count
+      if (acc[monthYear]) {
+        acc[monthYear]++;
+      } else {
+        // Otherwise, initialize it with 1
+        acc[monthYear] = 1;
+      }
+
+      return acc;
+    },
+    {}
+  );
+
+  // Convert the object into an array of the desired format
+  const commitsData = Object.entries(commitsByMonth).map(
+    ([month, commits]) => ({
+      month,
+      commits,
+    })
+  );
+
+  // Sort the array by date (earliest first)
+  commitsData.sort((a, b) => {
+    // Convert the 'MMM YY' format back to a date object
+    const dateA = moment(a.month, "MMM YY").toDate();
+    const dateB = moment(b.month, "MMM YY").toDate();
+
+    return dateA - dateB;
+  });
+  return (
+    <Box gridArea="Githubcommits">
+      <Box
+        bg={boxBackgroundColor}
+        border={boxBorderColor}
+        borderRadius="2xl"
+        align="center"
+        p={3}
+        w="100%"
+      >
+        <Flex justify="center" mb={3} align="center" gap={1}>
+          <Text color="#a5a8b6">Total commits:</Text>
+          <Text fontWeight={500} color="white">
+            {commitsChartData.totalCount}
+          </Text>
+        </Flex>
+        <LineChart
+          mb={4}
+          width={isDesktop ? 580 : 300}
+          height={200}
+          data={commitsData}
+        >
+          <XAxis dataKey="month" />
+          <YAxis width={30} />
+
+          <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
+          <Tooltip />
+        </LineChart>
+      </Box>
+    </Box>
+  );
+};
+
+const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
+  const isDesktop = useBreakpointValue({ base: false, lg: true });
+
+  const formattedData = poolHistoryChartData.map((item) => {
+    return {
+      date: moment(item.timestamp / 1000000).format("MMM"),
+      amount: e8sToIcp(item.amount).toFixed(2),
+    };
+  });
+
+  const totalAmount = formattedData.reduce((total, currentItem) => {
+    return total + parseFloat(currentItem.amount);
+  }, 0);
+
+  return (
+    <Box gridArea="PoolHistory">
+      <Box
+        border={boxBorderColor}
+        bg={boxBackgroundColor}
+        borderRadius="2xl"
+        align="center"
+        p={3}
+        w="100%"
+      >
+        <Flex justify="center" mb={3} align="center" gap={1}>
+          <Text color="#a5a8b6">Total ICP pool rewards:</Text>
+          <Text fontWeight={500} color="white">
+            {totalAmount} ICP
+          </Text>
+        </Flex>
+        <BarChart
+          width={isDesktop ? 580 : 300}
+          height={200}
+          data={formattedData}
+        >
+          <XAxis dataKey="date" />
+          <YAxis
+            width={50}
+            tickFormatter={(value) => `${value.toFixed(0)} ICP`}
+          />
+          <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
+        </BarChart>
+      </Box>
     </Box>
   );
 };

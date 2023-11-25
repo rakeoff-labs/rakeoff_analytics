@@ -21,7 +21,26 @@ export const getRakeoffStats = async () => {
   }
 };
 
-export const icpToDollars = async (e8sIcp) => {
+// take in the dollar value for the calculation
+export const icpToDollars = (icpPrice, e8sIcp) => {
+  // Create a formatter for USD currency
+  let formatCurrency = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0, // No decimals
+    maximumFractionDigits: 0, // No decimals
+  });
+
+  // Convert e8sIcp to the standard ICP unit
+  const icpAmount = e8sIcp / Math.pow(10, 8);
+
+  // Convert ICP to USD and then format as currency
+  const convertedAmount = icpAmount * Number(icpPrice);
+  return formatCurrency.format(convertedAmount);
+};
+
+// returns ICP price as a workable number
+export const GrabIcpPrice = async () => {
   const CoinApi = "https://api.coinbase.com/v2/prices/ICP-USD/buy";
 
   try {
@@ -30,37 +49,61 @@ export const icpToDollars = async (e8sIcp) => {
       data: { amount },
     } = await fetch(CoinApi).then((x) => x.json());
 
-    // Create a formatter for USD currency
-    let formatCurrency = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0, // No decimals
-      maximumFractionDigits: 0, // No decimals
-    });
-
-    // Convert e8sIcp to the standard ICP unit
-    const icpAmount = e8sIcp / Math.pow(10, 8);
-
-    // Convert ICP to USD and then format as currency
-    const convertedAmount = icpAmount * Number(amount);
-    return formatCurrency.format(convertedAmount);
+    return Number(amount);
   } catch (e) {
-    return "$0.00";
+    return 0;
   }
 };
-export const GrabIcpPrice = async () => {
-  try {
-    const response = await fetch(
-      "https://api.pro.coinbase.com/products/ICP-USD/candles?granularity=900"
-    );
-    if (!response.ok) {
-      throw new Error("API not working");
+
+export const getRakeoffCommitHistory = async () => {
+  const query = `
+    query ($orgName: String!, $repoName: String!) {
+      repository(owner: $orgName, name: $repoName) {
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history {
+                totalCount
+                edges {
+                  node {
+                    committedDate
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
-    const data = await response.json();
-    const price = data[0][4]; // Assuming this is the correct path to the price
-    return price; // Return the price
-  } catch (error) {
-    console.error("Failed to fetch data:", error);
-    return null; // Return null or some default value in case of an error
-  }
+  `;
+
+  const token = process.env.REACT_APP_GITHUB_TOKEN;
+
+  const variables = {
+    orgName: "rakeoff-labs",
+    repoName: "rakeoff",
+  };
+
+  const body = {
+    query,
+    variables,
+  };
+
+  const res = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+  const gitHub = await res.json();
+
+  const history = gitHub.data.repository.defaultBranchRef.target.history;
+  return history;
 };
+
+export const getRakeoffTvl = async () => {
+  const res = await fetch("https://api.llama.fi/protocol/rakeoff")
+
+  return await res.json()
+}

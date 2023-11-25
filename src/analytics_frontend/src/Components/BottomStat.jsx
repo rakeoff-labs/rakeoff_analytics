@@ -2,82 +2,73 @@ import React from "react";
 import {
   Container,
   SimpleGrid,
-  useBreakpointValue,
   Box,
-  Heading,
   Text,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
 } from "@chakra-ui/react";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
+import { InfoIcon } from "@chakra-ui/icons";
+
 const BottomStat = ({
   highestWinner,
-  higestPool,
+  highestPool,
   totalWinners,
   claimedICP,
   totalClaim,
   getrewards,
+  averageStake,
+  averagePerPool,
+  averagePoolWin,
+  totalSuccessfulPools,
+  totalTransactionFailures,
+  icpFeesFromDisbursement,
 }) => {
-  const isDesktop = useBreakpointValue({ base: false, lg: true });
+  // TODO more stats could do with extraInfo
+  // TODO need to explain in info that disbursement fees is only from ICP disbursement option
+  // TODO probably other stats need explanations
   return (
-    <Container maxW="7xl" mt={{ base: 3, md: 1 }} p={0}>
-      <Heading
-        textAlign="start"
-        size={{ base: "md", md: "lg" }}
-        m={{ base: 3, md: 3 }}
-        color="white"
-      >
-        ICP Pools
-      </Heading>
-      <SimpleGrid
-        gap={3}
-        columns={[2, 1, 4]}
-        spacing={{ base: 1, md: 4 }}
-        mx={{ base: 5, md: 5, lg: 0 }}
-      >
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={getrewards}
-          info="Total rewards"
+    <Container maxW="7xl" mt={{ base: 3, md: 1 }}>
+      <Text color="white" fontWeight={500} mt={6} mb={3}>
+        Pool analytics
+      </Text>
+      <SimpleGrid gap={3} columns={[2, 2, 4]}>
+        <BoxStat
+          stat={getrewards}
+          title="Total rewards"
+          extraInfo={
+            "The total USD value of all the rewards from previous prize pools on Rakeoff, excluding staking rewards"
+          }
         />
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={highestWinner}
-          info="Highest prize"
-        />
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={higestPool}
-          info="Largest pool"
-        />
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={totalWinners}
-          info="Total winners"
-        />
+        <BoxStat stat={`${highestWinner} ICP`} title="Highest prize" />
+        <BoxStat stat={`${highestPool} ICP`} title="Largest pool" />
+        <BoxStat stat={`${totalWinners} Winners`} title="Total winners" />
       </SimpleGrid>
-      <Heading
-        textAlign="start"
-        size={{ base: "md", md: "lg" }}
-        m={{ base: 3, md: 3 }}
-        color="white"
-      >
-        ICP Bonuses
-      </Heading>
 
-      <SimpleGrid
-        gap={3}
-        columns={[2, 1, 2]}
-        mx={{ base: 5, md: 5, lg: 0 }}
-        spacing={{ base: 1, md: 4 }}
-      >
-        <StoryBoxAndImage
-          heading={claimedICP}
-          isDesktop={isDesktop}
-          info=" ICP claimed"
-        />
-        <StoryBoxAndImage
-          isDesktop={isDesktop}
-          heading={totalClaim}
-          info="Total claims"
+      <Text color="white" fontWeight={500} mt={6} mb={3}>
+        Achievement analytics
+      </Text>
+      <SimpleGrid gap={3} columns={[2, 2, 2]}>
+        <BoxStat stat={`${totalClaim} Stakers`} title="Total claims" />
+        <BoxStat stat={`${claimedICP} ICP`} title="Bonuses claimed" />
+      </SimpleGrid>
+
+      <Text color="white" fontWeight={500} mt={6} mb={3}>
+        More analytics
+      </Text>
+      <SimpleGrid gap={3} columns={[2, 2, 3]}>
+        <BoxStat stat={`${averageStake} ICP`} title="Average stake" />
+        <BoxStat stat={`${averagePerPool} ICP`} title="Average pool" />
+        <BoxStat stat={`${averagePoolWin} ICP`} title="Average win" />
+        <BoxStat stat={totalSuccessfulPools} title="Successful pools" />
+        <BoxStat stat={totalTransactionFailures} title="Transaction failures" />
+        <BoxStat
+          stat={`${icpFeesFromDisbursement} ICP`}
+          title="Disbursement fees"
         />
       </SimpleGrid>
     </Container>
@@ -85,28 +76,46 @@ const BottomStat = ({
 };
 
 export default BottomStat;
-const StoryBoxAndImage = ({ isDesktop, heading, info }) => {
+
+const BoxStat = ({ stat, title, extraInfo }) => {
   return (
     <Box
       bg={boxBackgroundColor}
       border={boxBorderColor}
       borderRadius="2xl"
-      align="center"
-      m={2}
-      p={6}
+      p={3}
       w="100%"
     >
-      <Heading
-        size={isDesktop ? "lg" : "md"}
-        textAlign="center"
-        m={3}
-        mb={3}
-        color="white"
-      >
-        {heading}
-      </Heading>
-
-      <Text color="#a5a8b6">{info}</Text>
+      <Text color="#a5a8b6" noOfLines={1}>
+        {title} {extraInfo ? <InfoPopover details={extraInfo} /> : null}
+      </Text>
+      <Text color="white" fontSize={{ base: "xl", md: "3xl" }} noOfLines={1}>
+        {stat}
+      </Text>
     </Box>
+  );
+};
+
+const InfoPopover = ({ details }) => {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <InfoIcon
+          color="gray.500"
+          aria-label="info"
+          _hover={{
+            cursor: "pointer",
+            transform: "scale(1.1)",
+            transition: "transform 0.2s",
+          }}
+          mb={1}
+        />
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverArrow />
+        <PopoverCloseButton />
+        <PopoverBody color="white">{details}</PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };
