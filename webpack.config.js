@@ -1,4 +1,3 @@
-require("dotenv").config();
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -8,7 +7,7 @@ require("dotenv").config({ path: "./.env" });
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "analytics_frontend";
+const frontendDirectory = "rakeoff_analytics_frontend";
 
 const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
 
@@ -41,16 +40,9 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      { test: /\.(gif|svg|jpg|png|ico|jpeg)$/, loader: "file-loader" },
-
+      { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
+      { test: /\.(gif|svg|jpg|png|ico|jpeg)$/, loader: "file-loader" },
     ],
   },
 

@@ -89,21 +89,42 @@ export const getRakeoffCommitHistory = async () => {
     variables,
   };
 
-  const res = await fetch("https://api.github.com/graphql", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
-  });
-  const gitHub = await res.json();
+  try {
+    const res = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      // If the response status code is not in the 200-299 range,
+      // throw an error.
+      throw new Error();
+    }
 
-  const history = gitHub.data.repository.defaultBranchRef.target.history;
-  return history;
+    const gitHub = await res.json();
+    const history = gitHub.data.repository.defaultBranchRef.target.history;
+    return history;
+  } catch (e) {
+    console.error("Could not fetch github data");
+    return null;
+  }
 };
 
 export const getRakeoffTvl = async () => {
-  const res = await fetch("https://api.llama.fi/protocol/rakeoff")
+  try {
+    const res = await fetch("https://api.llama.fi/protocol/rakeoff");
 
-  return await res.json()
-}
+    if (!res.ok) {
+      // If the response status code is not in the 200-299 range,
+      // throw an error.
+      throw new Error();
+    }
+
+    return await res.json();
+  } catch (e) {
+    console.error("Could not fetch defiLLama data");
+    return null;
+  }
+};

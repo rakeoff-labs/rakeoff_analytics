@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import React from "react";
+import { mainBackgroundColor } from "./Components/colors";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -13,7 +14,9 @@ const theme = extendTheme({
   },
   styles: {
     global: {
-      body: {},
+      body: {
+        bg: mainBackgroundColor,
+      },
     },
   },
 });

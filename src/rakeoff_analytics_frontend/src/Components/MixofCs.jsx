@@ -12,27 +12,27 @@ import Graph from "./Graph";
 import { RakeoffGrey, boxBackgroundColor } from "./colors";
 
 const MixofCs = ({
-  icpStakers,
-  stakedAmount,
-  icpFees,
-  grabICP,
-  tvlChartData,
-  commitsChartData,
-  poolHistoryChartData,
+  total_stakers,
+  total_staked_amount,
+  icp_price,
+  tvl_history,
+  commit_history,
+  pool_history,
+  average_stake_amount,
 }) => {
   return (
     <Box position="relative">
       <Navbar />
       <Banner
-        icpStakers={icpStakers}
-        stakedAmount={stakedAmount}
-        icpFees={icpFees}
-        grabICP={grabICP}
+        icpStakers={total_stakers}
+        stakedAmount={total_staked_amount}
+        icpPrice={icp_price}
+        averageStake={average_stake_amount}
       />
       <Graph
-        tvlChartData={tvlChartData}
-        commitsChartData={commitsChartData}
-        poolHistoryChartData={poolHistoryChartData}
+        tvlChartData={tvl_history}
+        commitsChartData={commit_history}
+        poolHistoryChartData={pool_history}
       />
       <Box
         position="absolute"
@@ -49,7 +49,7 @@ const MixofCs = ({
 
 export default MixofCs;
 
-const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
+const Banner = ({ icpStakers, stakedAmount, averageStake, icpPrice }) => {
   return (
     <Container
       maxW="7xl"
@@ -75,13 +75,13 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
       <SimpleGrid
         columns={[2, 4, 4]}
         gap={1}
-        w={{ base: "90%", md: "50%" }}
+        w={{ base: "90%", md: "52%" }}
         my={6}
       >
-        <StatItem title={"ICP price"} stat={`$${grabICP}`} />
+        <StatItem title={"ICP price"} stat={`$${icpPrice}`} />
         <StatItem title={"Total Stakers"} stat={icpStakers} />
         <StatItem title={"ICP staked"} stat={stakedAmount} />
-        <StatItem title={"Fees collected"} stat={icpFees} />
+        <StatItem title={"Average stake"} stat={averageStake} />
       </SimpleGrid>
     </Container>
   );
@@ -90,7 +90,9 @@ const Banner = ({ icpStakers, stakedAmount, icpFees, grabICP }) => {
 const StatItem = ({ title, stat }) => {
   return (
     <Flex justify="start" align="center" gap={1}>
-      <Text color="white" noOfLines={1}>{title}:</Text>
+      <Text color="white" noOfLines={1}>
+        {title}:
+      </Text>
       <Text fontWeight={500} color="white">
         {stat}
       </Text>
