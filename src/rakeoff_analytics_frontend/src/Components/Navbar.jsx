@@ -46,7 +46,7 @@ const Navbar = () => {
                 _hover={{ color: "white", cursor: "pointer" }}
                 fontWeight={500}
               >
-                Homepage <ExternalLinkIcon mb={1} />
+                Home <ExternalLinkIcon mb={1} />
               </Text>
               <Text
                 fontSize="lg"
@@ -137,7 +137,7 @@ const MobileMenu = () => {
                 color={boxFontColor}
                 fontWeight={500}
               >
-                Homepage <ExternalLinkIcon mb={1} />
+                Home <ExternalLinkIcon mb={1} />
               </Text>
               <Divider />
               <Text
