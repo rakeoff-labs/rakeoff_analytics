@@ -6,7 +6,7 @@ export function e8sToIcp(x) {
 export const getRakeoffStats = async () => {
   try {
     const response = await fetch(
-      "https://jgvzt-eiaaa-aaaak-ae5kq-cai.raw.icp0.io/v1/rakeoff-stats"
+      "https://jgvzt-eiaaa-aaaak-ae5kq-cai.icp0.io/v1/rakeoff-stats"
     );
     if (!response.ok) {
       // If the response is not ok (e.g., 404, 500), return an empty object
