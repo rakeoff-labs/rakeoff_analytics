@@ -75,7 +75,7 @@ const Banner = ({ icpStakers, stakedAmount, averageStake, icpPrice }) => {
       <SimpleGrid
         columns={[2, 4, 4]}
         gap={1}
-        w={{ base: "90%", md: "52%" }}
+        w={{ base: "100%", md: "55%" }}
         my={6}
       >
         <StatItem title={"ICP price"} stat={`$${icpPrice}`} />

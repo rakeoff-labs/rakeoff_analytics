@@ -54,10 +54,10 @@ const App = () => {
       fees_from_prize_pool: e8sToIcp(
         Number(stats.fees_collected) - Number(stats.fees_from_disbursement)
       ).toFixed(2),
-      average_stake_amount: (
+      average_stake_amount: Math.round(
         Math.round(e8sToIcp(Number(stats.total_staked))) /
-        Number(stats.total_stakers)
-      ).toFixed(2), // custom calculation
+          Number(stats.total_stakers)
+      ), // custom calculation
       average_pool_win: e8sToIcp(stats.average_win_amount).toFixed(2),
       average_icp_per_pool: e8sToIcp(stats.average_per_pool).toFixed(2),
       total_successful_pools: stats.total_pools_successfully_completed,
