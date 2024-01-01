@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { boxBackgroundColor, boxBorderColor } from "./colors";
-import { e8sToIcp } from "./tools";
+import { e8sToIcp, roundUplatest } from "./tools";
 import moment from "moment";
 
 export default function Graph({
@@ -55,12 +55,17 @@ export default function Graph({
 const TvlChart = ({ tvlChartData }) => {
   const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
 
-  const formattedData = tvlChartData.tvl.map((item) => {
-    return {
+  const formattedData = tvlChartData.tvl
+    .slice(-12) // showing the last 12 days
+    .map((item) => ({
       date: moment.unix(item.date).format("MMM DD"),
       usd: item.totalLiquidityUSD.toFixed(2),
-    };
-  });
+    }));
+
+  const latestValue = roundUplatest(
+    formattedData[formattedData.length - 1].usd,
+    100000
+  );
 
   return (
     <Box gridArea="Tvl">
@@ -85,8 +90,9 @@ const TvlChart = ({ tvlChartData }) => {
           <AreaChart data={formattedData}>
             <XAxis dataKey="date" />
             <YAxis
-              width={50}
+              width={56} //set all to 56 so 'ICP' and 'cmt' can fit on one one line
               type="number"
+              domain={[0, latestValue]}
               tickFormatter={(value) =>
                 `$${
                   value >= 1000
@@ -177,7 +183,10 @@ const CommitLineChart = ({ commitsChartData }) => {
         <ResponsiveContainer width={"100%"} height={200}>
           <LineChart mb={4} height={200} data={commitsData}>
             <XAxis dataKey="month" />
-            <YAxis width={50} />
+            <YAxis
+              width={56}
+              tickFormatter={(value) => `${value.toFixed(0)} cmt`} // added 'cmt' as looked bland compared to the other graphs
+            />
 
             <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
             <Tooltip />
@@ -200,6 +209,11 @@ const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
     return total + parseFloat(currentItem.amount);
   }, 0);
 
+  // findi the largest pool amount
+  const largestPoolAmount = Math.max(
+    ...formattedData.map((item) => parseFloat(item.amount))
+  );
+
   return (
     <Box gridArea="PoolHistory">
       <Box
@@ -220,9 +234,11 @@ const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
           <BarChart data={formattedData}>
             <XAxis dataKey="date" />
             <YAxis
-              width={50}
+              width={56}
               tickFormatter={(value) => `${value.toFixed(0)} ICP`}
+              domain={[0, roundUplatest(largestPoolAmount, 10)]}
             />
+            <Tooltip />
             <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
           </BarChart>
         </ResponsiveContainer>

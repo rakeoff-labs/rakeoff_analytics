@@ -128,3 +128,7 @@ export const getRakeoffTvl = async () => {
     return null;
   }
 };
+
+export function roundUplatest(number, factor) {
+  return Math.ceil(number / factor) * factor;
+}
