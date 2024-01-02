@@ -90,7 +90,7 @@ const TvlChart = ({ tvlChartData }) => {
           <AreaChart data={formattedData}>
             <XAxis dataKey="date" />
             <YAxis
-              width={56} //set all to 56 so 'ICP' and 'cmt' can fit on one one line
+              width={56} // set all to 56 so 'ICP' and 'cmt' can fit on one one line
               type="number"
               domain={[0, latestValue]}
               tickFormatter={(value) =>
@@ -201,17 +201,17 @@ const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
   const formattedData = poolHistoryChartData.map((item) => {
     return {
       date: moment(item.timestamp / 1000000).format("MMM"),
-      amount: e8sToIcp(item.amount).toFixed(2),
+      icp: e8sToIcp(item.amount).toFixed(2),
     };
   });
 
   const totalAmount = formattedData.reduce((total, currentItem) => {
-    return total + parseFloat(currentItem.amount);
+    return total + parseFloat(currentItem.icp);
   }, 0);
 
-  // findi the largest pool amount
+  // finding the largest pool amount
   const largestPoolAmount = Math.max(
-    ...formattedData.map((item) => parseFloat(item.amount))
+    ...formattedData.map((item) => parseFloat(item.icp))
   );
 
   return (
@@ -239,7 +239,7 @@ const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
               domain={[0, roundUplatest(largestPoolAmount, 10)]}
             />
             <Tooltip />
-            <Bar dataKey="amount" fill="#8a2be2" barSize={50} />
+            <Bar dataKey="icp" fill="#8a2be2" barSize={50} />
           </BarChart>
         </ResponsiveContainer>
       </Box>
