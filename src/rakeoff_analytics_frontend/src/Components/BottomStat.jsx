@@ -48,8 +48,8 @@ const BottomStat = ({
         />
         <BoxStat stat={`${highest_pool_amount} ICP`} title="Largest pool" />
         <BoxStat stat={`${total_pool_winners} Winners`} title="Total winners" />
-        <BoxStat stat={`${average_pool_win} ICP`} title="Average pool" />
-        <BoxStat stat={`${average_icp_per_pool} ICP`} title="Average win" />
+        <BoxStat stat={`${average_icp_per_pool} ICP`} title="Average pool" />
+        <BoxStat stat={`${average_pool_win} ICP`} title="Average win" />
         <BoxStat stat={total_successful_pools} title="Successful pools" />
         <BoxStat
           stat={total_transaction_failures}
