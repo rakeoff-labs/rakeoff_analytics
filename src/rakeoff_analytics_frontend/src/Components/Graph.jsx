@@ -55,6 +55,10 @@ export default function Graph({
 const TvlChart = ({ tvlChartData }) => {
   const isDesktop = useBreakpointValue({ base: false, md: false, lg: true });
 
+  if (!tvlChartData) {
+    return "Unable to retrieve TVL data. Please check the latest information at: https://defillama.com/protocol/rakeoff";
+  }
+
   const formattedData = tvlChartData.tvl
     .slice(-12) // showing the last 12 days
     .map((item) => ({
