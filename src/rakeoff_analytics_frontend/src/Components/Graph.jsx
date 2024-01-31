@@ -231,7 +231,7 @@ const PoolHistoryBarChart = ({ poolHistoryChartData }) => {
         <Flex justify="center" mb={3} align="center" gap={1}>
           <Text color="#a5a8b6">Total ICP pool rewards:</Text>
           <Text fontWeight={500} color="white">
-            {totalAmount} ICP
+            {Math.round(totalAmount)} ICP
           </Text>
         </Flex>
         <ResponsiveContainer width={"100%"} height={200}>
