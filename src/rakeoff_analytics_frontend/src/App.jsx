@@ -8,6 +8,8 @@ import {
   GrabIcpPrice,
   getRakeoffTvl,
   getRakeoffCommitHistory,
+  getLandingCommits,
+  apiOBject,
 } from "./Components/tools";
 import rakeoffLogo from "../assets/rakeoff_logo_white.svg";
 
@@ -23,12 +25,16 @@ const App = () => {
 
   const fetchStats = async () => {
     // do all the stat work here
-    const [icpPrice, commitData, tvlData, stats] = await Promise.all([
-      GrabIcpPrice(),
-      getRakeoffCommitHistory(),
-      getRakeoffTvl(),
-      getRakeoffStats(),
-    ]);
+    const [icpPrice, commitData, tvlData, stats, totalCommits, objects] =
+      await Promise.all([
+        GrabIcpPrice(),
+        getRakeoffCommitHistory(),
+
+        getRakeoffTvl(),
+        getRakeoffStats(),
+        getLandingCommits(),
+        apiOBject,
+      ]);
 
     // set the stats
     setRakeoffStats({
@@ -65,6 +71,8 @@ const App = () => {
       pool_history: stats.pool_history_chart_data,
       commit_history: commitData,
       tvl_history: tvlData,
+      totalCommits,
+      objects,
     });
 
     // everything is loaded

@@ -19,6 +19,8 @@ const MixofCs = ({
   commit_history,
   pool_history,
   average_stake_amount,
+  totalCommits,
+  objects,
 }) => {
   return (
     <Box position="relative">
@@ -33,6 +35,8 @@ const MixofCs = ({
         tvlChartData={tvl_history}
         commitsChartData={commit_history}
         poolHistoryChartData={pool_history}
+        totalCommits={totalCommits}
+        objects={objects}
       />
       <Box
         position="absolute"

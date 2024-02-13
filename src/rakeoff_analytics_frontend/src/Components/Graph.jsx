@@ -28,6 +28,8 @@ export default function Graph({
   tvlChartData,
   commitsChartData,
   poolHistoryChartData,
+  totalCommits,
+  objects,
 }) {
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }}>
@@ -46,7 +48,11 @@ export default function Graph({
       >
         <PoolHistoryBarChart poolHistoryChartData={poolHistoryChartData} />
         <TvlChart tvlChartData={tvlChartData} />
-        <CommitLineChart commitsChartData={commitsChartData} />
+        <CommitLineChart
+          commitsChartData={commitsChartData}
+          totalCommits={totalCommits}
+          objects={objects}
+        />
       </SimpleGrid>
     </Container>
   );
@@ -133,41 +139,44 @@ const TvlChart = ({ tvlChartData }) => {
   );
 };
 
-const CommitLineChart = ({ commitsChartData }) => {
-  const commitsByMonth = commitsChartData.edges.reduce(
-    (acc, { node: { committedDate } }) => {
-      // Format the date to a 'Month Year' format using Moment.js
-      const monthYear = moment(committedDate).format("MMM YY");
+const CommitLineChart = ({ objects, totalCommits }) => {
+  const names = objects.map((item) => item[0]);
+  console.log("the names of the chart", names);
 
-      // If this month-year combination is already in the accumulator, increment its count
-      if (acc[monthYear]) {
-        acc[monthYear]++;
-      } else {
-        // Otherwise, initialize it with 1
-        acc[monthYear] = 1;
-      }
+  // const commitsByMonth = commitsChartData.edges.reduce(
+  //   (acc, { node: { committedDate } }) => {
+  //     // Format the date to a 'Month Year' format using Moment.js
+  //     const monthYear = moment(committedDate).format("MMM YY");
 
-      return acc;
-    },
-    {}
-  );
+  //     // If this month-year combination is already in the accumulator, increment its count
+  //     if (acc[monthYear]) {
+  //       acc[monthYear]++;
+  //     } else {
+  //       // Otherwise, initialize it with 1
+  //       acc[monthYear] = 1;
+  //     }
+
+  //     return acc;
+  //   },
+  //   {}
+  // );
 
   // Convert the object into an array of the desired format
-  const commitsData = Object.entries(commitsByMonth).map(
-    ([month, commits]) => ({
-      month,
-      commits,
-    })
-  );
+  // const commitsData = Object.entries(commitsByMonth).map(
+  //   ([month, commits]) => ({
+  //     month,
+  //     commits,
+  //   })
+  // );
 
-  // Sort the array by date (earliest first)
-  commitsData.sort((a, b) => {
-    // Convert the 'MMM YY' format back to a date object
-    const dateA = moment(a.month, "MMM YY").toDate();
-    const dateB = moment(b.month, "MMM YY").toDate();
+  // // Sort the array by date (earliest first)
+  // commitsData.sort((a, b) => {
+  //   // Convert the 'MMM YY' format back to a date object
+  //   const dateA = moment(a.month, "MMM YY").toDate();
+  //   const dateB = moment(b.month, "MMM YY").toDate();
 
-    return dateA - dateB;
-  });
+  //   return dateA - dateB;
+  // });
   return (
     <Box gridArea="Githubcommits">
       <Box
@@ -181,12 +190,13 @@ const CommitLineChart = ({ commitsChartData }) => {
         <Flex justify="center" mb={3} align="center" gap={1}>
           <Text color="#a5a8b6">Total GitHub commits:</Text>
           <Text fontWeight={500} color="white">
-            {commitsChartData.totalCount}
+            {totalCommits}
           </Text>
         </Flex>
         <ResponsiveContainer width={"100%"} height={200}>
-          <LineChart mb={4} height={200} data={commitsData}>
-            <XAxis dataKey="month" />
+          <LineChart mb={4} height={200}>
+            <XAxis dataKey={names} />
+
             <YAxis
               width={56}
               tickFormatter={(value) => `${value.toFixed(0)} cmt`} // added 'cmt' as looked bland compared to the other graphs

@@ -132,3 +132,63 @@ export const getRakeoffTvl = async () => {
 export function roundUplatest(number, factor) {
   return Math.ceil(number / factor) * factor;
 }
+
+// array for multiple apis for rakeoff and loop through below
+export const rAPIs = {
+  landing:
+    "https://api.github.com/repos/rakeoff-labs/rakeoff_landing/contributors",
+
+  analytics:
+    "https://api.github.com/repos/rakeoff-labs/rakeoff_analytics/contributors",
+
+  statistics:
+    "https://api.github.com/repos/rakeoff-labs/rakeoff_statistics/contributors",
+
+  achievements:
+    "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
+
+  dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
+
+  liquid:
+    "https://api.github.com/repos/rakeoff-labs/rakeoff_liquid/contributors",
+};
+
+export const apiOBject = Object.entries(rAPIs);
+
+console.log("apiIntOOL", apiOBject[0]);
+
+export const getLandingCommits = async () => {
+  // added token to give auth to private
+  const token = process.env.REACT_APP_GITHUB_TOKEN;
+  try {
+    const results = await Promise.all(
+      apiOBject.map(async ([key, API]) => {
+        const res = await fetch(API, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) {
+          throw new Error(`Failed to fetch data from ${API}`);
+        }
+        return { [key]: await res.json() };
+      })
+    );
+
+    const totalCommits = results.reduce((total, response) => {
+      const data = Object.values(response)[0];
+
+      for (let i = 0; i < data.length; i++) {
+        total += data[i].contributions;
+      }
+
+      return total;
+    }, 0);
+
+    console.log("total commits", totalCommits);
+    return totalCommits;
+  } catch (error) {
+    console.error("Error:", error.message);
+    return null;
+  }
+};
