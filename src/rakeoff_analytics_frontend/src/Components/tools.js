@@ -155,40 +155,45 @@ export const rAPIs = {
 
 export const apiOBject = Object.entries(rAPIs);
 
-console.log("apiIntOOL", apiOBject[0]);
-
 export const getLandingCommits = async () => {
-  // added token to give auth to private
   const token = process.env.REACT_APP_GITHUB_TOKEN;
-  try {
-    const results = await Promise.all(
-      apiOBject.map(async ([key, API]) => {
-        const res = await fetch(API, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!res.ok) {
-          throw new Error(`Failed to fetch data from ${API}`);
-        }
-        return { [key]: await res.json() };
+  // initialise with an obect
+  const results = {};
+  // using the Promise.all so no await
+  const getALLpromise = apiOBject.map(([key, API]) => {
+    return (
+      fetch(API, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error();
+          }
+          return response.json();
+        })
+        /// response returns data now we use reduce to grab the total count of each api
+        .then((data) => {
+          const individualCommits = data.reduce(
+            (total, contributor) => total + contributor.contributions,
+            0
+          );
+
+          // outputed as object
+          results[key] = { name: key, commits: individualCommits };
+          //  const sum = results[key].commits.reduce((total, acc) => total + acc )
+
+          //   console.log("grabbing total", sum);
+        })
+
+        .catch((e) => {
+          console.error("Error:", e.message);
+        })
     );
+  });
 
-    const totalCommits = results.reduce((total, response) => {
-      const data = Object.values(response)[0];
+  await Promise.all(getALLpromise);
 
-      for (let i = 0; i < data.length; i++) {
-        total += data[i].contributions;
-      }
-
-      return total;
-    }, 0);
-
-    console.log("total commits", totalCommits);
-    return totalCommits;
-  } catch (error) {
-    console.error("Error:", error.message);
-    return null;
-  }
+  console.log("Results", results);
 };

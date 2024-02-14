@@ -140,8 +140,8 @@ const TvlChart = ({ tvlChartData }) => {
 };
 
 const CommitLineChart = ({ objects, totalCommits }) => {
-  const names = objects.map((item) => item[0]);
-  console.log("the names of the chart", names);
+  // const names = objects.map((item) => item[0]);
+  // console.log("the names of the chart", names);
 
   // const commitsByMonth = commitsChartData.edges.reduce(
   //   (acc, { node: { committedDate } }) => {
@@ -190,12 +190,12 @@ const CommitLineChart = ({ objects, totalCommits }) => {
         <Flex justify="center" mb={3} align="center" gap={1}>
           <Text color="#a5a8b6">Total GitHub commits:</Text>
           <Text fontWeight={500} color="white">
-            {totalCommits}
+            {/* {totalCommits} */}
           </Text>
         </Flex>
         <ResponsiveContainer width={"100%"} height={200}>
           <LineChart mb={4} height={200}>
-            <XAxis dataKey={names} />
+            {/* <XAxis dataKey={names} /> */}
 
             <YAxis
               width={56}
