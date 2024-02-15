@@ -155,10 +155,13 @@ export const rAPIs = {
 
 export const apiOBject = Object.entries(rAPIs);
 
-export const getLandingCommits = async () => {
+export const getTotalCommits = async () => {
   const token = process.env.REACT_APP_GITHUB_TOKEN;
   // initialise with an obect
   const results = {};
+  // added an array to loop through each commit to produce sum
+  const totals = [];
+
   // using the Promise.all so no await
   const getALLpromise = apiOBject.map(([key, API]) => {
     return (
@@ -174,6 +177,7 @@ export const getLandingCommits = async () => {
           return response.json();
         })
         /// response returns data now we use reduce to grab the total count of each api
+        // first getting the individual contributions sum
         .then((data) => {
           const individualCommits = data.reduce(
             (total, contributor) => total + contributor.contributions,
@@ -181,12 +185,11 @@ export const getLandingCommits = async () => {
           );
 
           // outputed as object
+          // now getting the total commit sum
           results[key] = { name: key, commits: individualCommits };
-          //  const sum = results[key].commits.reduce((total, acc) => total + acc )
-
-          //   console.log("grabbing total", sum);
+          const total = results[key].commits;
+          totals.push(total);
         })
-
         .catch((e) => {
           console.error("Error:", e.message);
         })
@@ -195,5 +198,10 @@ export const getLandingCommits = async () => {
 
   await Promise.all(getALLpromise);
 
-  console.log("Results", results);
+  const sumOfCommits = totals.reduce((total, iter) => total + iter, 0);
+  // console.log("grabbing total", sum);
+  // console.log("totallllllss", totals);
+  // console.log("Results", results);
+  /// returning results which is the objects of the apis with name and individual commits, and the sum of all commits
+  return { results, sumOfCommits };
 };

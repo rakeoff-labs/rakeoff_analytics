@@ -29,7 +29,6 @@ export default function Graph({
   commitsChartData,
   poolHistoryChartData,
   totalCommits,
-  objects,
 }) {
   return (
     <Container maxW="7xl" mt={{ base: 3, md: 1 }}>
@@ -51,7 +50,6 @@ export default function Graph({
         <CommitLineChart
           commitsChartData={commitsChartData}
           totalCommits={totalCommits}
-          objects={objects}
         />
       </SimpleGrid>
     </Container>
@@ -139,7 +137,26 @@ const TvlChart = ({ tvlChartData }) => {
   );
 };
 
-const CommitLineChart = ({ objects, totalCommits }) => {
+const CommitLineChart = ({ totalCommits }) => {
+  const commits = totalCommits.results;
+  console.log("we got object", commits);
+  const ObjectLoop = Object.entries(commits).map(([key, value]) => {
+    return {
+      name: value.name,
+      commits: value.commits,
+    };
+  });
+  console.log("this is object loop", ObjectLoop);
+
+  // let dataKeys = Object.keys(totalCommits.results);
+  // const formattedData = dataKeys.map((item) => {
+  //   return {
+  //     name: item.name,
+  //     commits: item.commits,
+  //   };
+  // });
+  // console.log("this the keys turned into an array", dataKeys);
+  // console.log("this is tje formatted data", formattedData);
   // const names = objects.map((item) => item[0]);
   // console.log("the names of the chart", names);
 
@@ -190,21 +207,22 @@ const CommitLineChart = ({ objects, totalCommits }) => {
         <Flex justify="center" mb={3} align="center" gap={1}>
           <Text color="#a5a8b6">Total GitHub commits:</Text>
           <Text fontWeight={500} color="white">
-            {/* {totalCommits} */}
+            {totalCommits.sumOfCommits}
           </Text>
         </Flex>
         <ResponsiveContainer width={"100%"} height={200}>
-          <LineChart mb={4} height={200}>
-            {/* <XAxis dataKey={names} /> */}
+          <BarChart mb={4} data={ObjectLoop} height={200}>
+            <XAxis dataKey="name" />
 
             <YAxis
+              dataKey="commits"
               width={56}
-              tickFormatter={(value) => `${value.toFixed(0)} cmt`} // added 'cmt' as looked bland compared to the other graphs
+              // tickFormatter={(value) => `${value.toFixed(0)} cmt`} // added 'cmt' as looked bland compared to the other graphs
             />
 
             <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
-            <Tooltip />
-          </LineChart>
+            {/* <Tooltip /> */}
+          </BarChart>
         </ResponsiveContainer>
       </Box>
     </Box>
