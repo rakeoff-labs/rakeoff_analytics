@@ -5,6 +5,7 @@ import {
   YAxis,
   LineChart,
   Line,
+  ComposedChart,
   Tooltip,
   AreaChart,
   Area,
@@ -138,62 +139,20 @@ const TvlChart = ({ tvlChartData }) => {
 };
 
 const CommitLineChart = ({ totalCommits }) => {
-  const commits = totalCommits.results;
-  console.log("we got object", commits);
-  const ObjectLoop = Object.entries(commits).map(([key, value]) => {
-    return {
-      name: value.name,
-      commits: value.commits,
-    };
+  const cleanedCommits = totalCommits.filter((item) => {
+    if (item) {
+      return item;
+    }
   });
-  console.log("this is object loop", ObjectLoop);
 
-  // let dataKeys = Object.keys(totalCommits.results);
-  // const formattedData = dataKeys.map((item) => {
-  //   return {
-  //     name: item.name,
-  //     commits: item.commits,
-  //   };
-  // });
-  // console.log("this the keys turned into an array", dataKeys);
-  // console.log("this is tje formatted data", formattedData);
-  // const names = objects.map((item) => item[0]);
-  // console.log("the names of the chart", names);
+  const getSumOfTotalCommits = cleanedCommits.reduce((total, iter) => {
+    if (iter) {
+      return total + Number(iter.commits);
+    }
+  }, 0);
 
-  // const commitsByMonth = commitsChartData.edges.reduce(
-  //   (acc, { node: { committedDate } }) => {
-  //     // Format the date to a 'Month Year' format using Moment.js
-  //     const monthYear = moment(committedDate).format("MMM YY");
+  const sortData = cleanedCommits.sort((a, b) => a.commits - b.commits);
 
-  //     // If this month-year combination is already in the accumulator, increment its count
-  //     if (acc[monthYear]) {
-  //       acc[monthYear]++;
-  //     } else {
-  //       // Otherwise, initialize it with 1
-  //       acc[monthYear] = 1;
-  //     }
-
-  //     return acc;
-  //   },
-  //   {}
-  // );
-
-  // Convert the object into an array of the desired format
-  // const commitsData = Object.entries(commitsByMonth).map(
-  //   ([month, commits]) => ({
-  //     month,
-  //     commits,
-  //   })
-  // );
-
-  // // Sort the array by date (earliest first)
-  // commitsData.sort((a, b) => {
-  //   // Convert the 'MMM YY' format back to a date object
-  //   const dateA = moment(a.month, "MMM YY").toDate();
-  //   const dateB = moment(b.month, "MMM YY").toDate();
-
-  //   return dateA - dateB;
-  // });
   return (
     <Box gridArea="Githubcommits">
       <Box
@@ -207,22 +166,19 @@ const CommitLineChart = ({ totalCommits }) => {
         <Flex justify="center" mb={3} align="center" gap={1}>
           <Text color="#a5a8b6">Total GitHub commits:</Text>
           <Text fontWeight={500} color="white">
-            {totalCommits.sumOfCommits}
+            {getSumOfTotalCommits}
           </Text>
         </Flex>
         <ResponsiveContainer width={"100%"} height={200}>
-          <BarChart mb={4} data={ObjectLoop} height={200}>
+          <ComposedChart data={sortData} mb={4} height={200}>
             <XAxis dataKey="name" />
 
-            <YAxis
-              dataKey="commits"
-              width={56}
-              // tickFormatter={(value) => `${value.toFixed(0)} cmt`} // added 'cmt' as looked bland compared to the other graphs
-            />
+            <YAxis dataKey="commits" width={56} />
 
-            <Line type="monotone" dataKey="commits" stroke="#8a2be2" />
-            {/* <Tooltip /> */}
-          </BarChart>
+            <Line type="monotone" dataKey="name" stroke="#8a2be2" />
+            <Tooltip />
+            <Bar dataKey="commits" fill="#8a2be2" barSize={50} />
+          </ComposedChart>
         </ResponsiveContainer>
       </Box>
     </Box>

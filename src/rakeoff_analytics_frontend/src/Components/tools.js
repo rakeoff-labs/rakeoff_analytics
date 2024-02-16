@@ -133,75 +133,79 @@ export function roundUplatest(number, factor) {
   return Math.ceil(number / factor) * factor;
 }
 
-// array for multiple apis for rakeoff and loop through below
-export const rAPIs = {
-  landing:
-    "https://api.github.com/repos/rakeoff-labs/rakeoff_landing/contributors",
-
-  analytics:
-    "https://api.github.com/repos/rakeoff-labs/rakeoff_analytics/contributors",
-
-  statistics:
-    "https://api.github.com/repos/rakeoff-labs/rakeoff_statistics/contributors",
-
-  achievements:
-    "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
-
-  dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
-
-  liquid:
-    "https://api.github.com/repos/rakeoff-labs/rakeoff_liquid/contributors",
-};
-
-export const apiOBject = Object.entries(rAPIs);
-
-export const getTotalCommits = async () => {
+const getCommitContribution = async (link) => {
   const token = process.env.REACT_APP_GITHUB_TOKEN;
-  // initialise with an obect
-  const results = {};
-  // added an array to loop through each commit to produce sum
-  const totals = [];
 
-  // using the Promise.all so no await
-  const getALLpromise = apiOBject.map(([key, API]) => {
-    return (
-      fetch(API, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error();
-          }
-          return response.json();
-        })
-        /// response returns data now we use reduce to grab the total count of each api
-        // first getting the individual contributions sum
-        .then((data) => {
-          const individualCommits = data.reduce(
-            (total, contributor) => total + contributor.contributions,
-            0
-          );
-
-          // outputed as object
-          // now getting the total commit sum
-          results[key] = { name: key, commits: individualCommits };
-          const total = results[key].commits;
-          totals.push(total);
-        })
-        .catch((e) => {
-          console.error("Error:", e.message);
-        })
-    );
+  const res = await fetch(link[1], {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
-  await Promise.all(getALLpromise);
+  if (!res.ok) {
+    console.error(`Could not fetch ${link} data`);
 
-  const sumOfCommits = totals.reduce((total, iter) => total + iter, 0);
-  // console.log("grabbing total", sum);
-  // console.log("totallllllss", totals);
-  // console.log("Results", results);
-  /// returning results which is the objects of the apis with name and individual commits, and the sum of all commits
-  return { results, sumOfCommits };
+    throw new Error();
+  }
+
+  let result = {};
+  result[link[0]] = await res.json();
+
+  return result;
+};
+
+export const getTotalCommits = async () => {
+  const rAPIs = {
+    home: "https://api.github.com/repos/rakeoff-labs/rakeoff_landing/contributors",
+
+    analytics:
+      "https://api.github.com/repos/rakeoff-labs/rakeoff_analytics/contributors",
+
+    stats:
+      "https://api.github.com/repos/rakeoff-labs/rakeoff_statistics/contributors",
+
+    achievements:
+      "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
+
+    dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
+
+    rICP: "https://api.github.com/repos/rakeoff-labs/rakeoff_liquid/contributors",
+  };
+
+  const apiPromises = Object.entries(rAPIs).map((objectItem) => {
+    return getCommitContribution(objectItem);
+  });
+
+  const results = await Promise.allSettled(apiPromises);
+
+  // mapping through results which is an array of objects
+  const fulfilledResults = results.map((response) => {
+    /// if results response status = fulfilled return their values, else null
+    if (response.status === "fulfilled") {
+      //objectValues returns the values of each api, some contain two arrays as there are two devs for some repos
+      const objectValues = Object.values(response.value);
+      // some individual repo commitsc ontain two arrays and we need to add to get the total sum for each repo commit
+      const getRepoCommits = objectValues.reduce((total, iter) => {
+        // mapping through the names to get the dev count
+        const devContributions = iter.map((dev) => dev.contributions);
+        // getting total developer contributions, we are now inside the contributions, so no need to do iter.contributions
+        const getTallyOfContributions = devContributions.reduce(
+          (total, iter) => total + iter,
+          0
+        );
+        // returns total contribution
+        return total + getTallyOfContributions;
+      }, 0);
+
+      let result = {
+        name: Object.keys(response.value)[0],
+        commits: getRepoCommits,
+      };
+      return result;
+    } else {
+      return null;
+    }
+  });
+
+  return fulfilledResults;
 };
