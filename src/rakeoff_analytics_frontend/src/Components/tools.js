@@ -55,63 +55,6 @@ export const GrabIcpPrice = async () => {
   }
 };
 
-export const getRakeoffCommitHistory = async () => {
-  const query = `
-    query ($orgName: String!, $repoName: String!) {
-      repository(owner: $orgName, name: $repoName) {
-        defaultBranchRef {
-          target {
-            ... on Commit {
-              history {
-                totalCount
-                edges {
-                  node {
-                    committedDate
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const token = process.env.REACT_APP_GITHUB_TOKEN;
-
-  const variables = {
-    orgName: "rakeoff-labs",
-    repoName: "rakeoff",
-  };
-
-  const body = {
-    query,
-    variables,
-  };
-
-  try {
-    const res = await fetch("https://api.github.com/graphql", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      // If the response status code is not in the 200-299 range,
-      // throw an error.
-      throw new Error();
-    }
-
-    const gitHub = await res.json();
-    const history = gitHub.data.repository.defaultBranchRef.target.history;
-    return history;
-  } catch (e) {
-    console.error("Could not fetch github data");
-    return null;
-  }
-};
-
 export const getRakeoffTvl = async () => {
   try {
     const res = await fetch("https://api.llama.fi/protocol/rakeoff");
@@ -203,6 +146,7 @@ export const getTotalCommits = async () => {
       };
       return result;
     } else {
+      console.error(response.reason);
       return null;
     }
   });

@@ -3,7 +3,6 @@ import {
   XAxis,
   Bar,
   YAxis,
-  LineChart,
   Line,
   ComposedChart,
   Tooltip,
@@ -86,53 +85,55 @@ const TvlChart = ({ tvlChartData }) => {
         p={3}
         w="100%"
       >
-        <Flex justify="center" mb={3} align="center" gap={1}>
-          <Text color="#a5a8b6">Total value locked:</Text>
-          <Text fontWeight={500} color="white">
-            $
-            {Math.round(
-              tvlChartData.tvl[tvlChartData.tvl.length - 1].totalLiquidityUSD
-            ).toLocaleString("en-US")}
-          </Text>
-        </Flex>
-        <ResponsiveContainer width={"100%"} height={isDesktop ? 450 : 350}>
-          <AreaChart data={formattedData}>
-            <XAxis dataKey="date" />
-            <YAxis
-              width={56} // set all to 56 so 'ICP' and 'cmt' can fit on one one line
-              type="number"
-              domain={[0, latestValue]}
-              tickFormatter={(value) =>
-                `$${
-                  value >= 1000
-                    ? `${(value / 1000).toFixed(0)}k`
-                    : value.toString()
-                }`
-              }
-            />
+        <>
+          <Flex justify="center" mb={3} align="center" gap={1}>
+            <Text color="#a5a8b6">Total value locked:</Text>
+            <Text fontWeight={500} color="white">
+              $
+              {Math.round(
+                tvlChartData.tvl[tvlChartData.tvl.length - 1].totalLiquidityUSD
+              ).toLocaleString("en-US")}
+            </Text>
+          </Flex>
+          <ResponsiveContainer width={"100%"} height={isDesktop ? 450 : 350}>
+            <AreaChart data={formattedData}>
+              <XAxis dataKey="date" />
+              <YAxis
+                width={56} // set all to 56 so 'ICP' and 'cmt' can fit on one one line
+                type="number"
+                domain={[0, latestValue]}
+                tickFormatter={(value) =>
+                  `$${
+                    value >= 1000
+                      ? `${(value / 1000).toFixed(0)}k`
+                      : value.toString()
+                  }`
+                }
+              />
 
-            <Area
-              type="monotone"
-              dataKey="usd"
-              stroke="#8884d8"
-              fill="#8a2be2"
-            />
-            <Tooltip />
-          </AreaChart>
-        </ResponsiveContainer>
-        <Flex align="center" gap={1} mb={0.5} justify="center">
-          <Text color="#a5a8b6">Source:</Text>
-          <Text
-            as="a"
-            href="https://defillama.com/protocol/rakeoff"
-            target="_blank"
-            color={"white"}
-            _hover={{ opacity: "0.8", cursor: "pointer" }}
-            fontWeight={500}
-          >
-            DefiLlama <ExternalLinkIcon mb={1} />
-          </Text>
-        </Flex>
+              <Area
+                type="monotone"
+                dataKey="usd"
+                stroke="#8884d8"
+                fill="#8a2be2"
+              />
+              <Tooltip />
+            </AreaChart>
+          </ResponsiveContainer>
+          <Flex align="center" gap={1} mb={0.5} justify="center">
+            <Text color="#a5a8b6">Source:</Text>
+            <Text
+              as="a"
+              href="https://defillama.com/protocol/rakeoff"
+              target="_blank"
+              color={"white"}
+              _hover={{ opacity: "0.8", cursor: "pointer" }}
+              fontWeight={500}
+            >
+              DefiLlama <ExternalLinkIcon mb={1} />
+            </Text>
+          </Flex>
+        </>
       </Box>
     </Box>
   );
@@ -172,9 +173,7 @@ const CommitLineChart = ({ totalCommits }) => {
         <ResponsiveContainer width={"100%"} height={200}>
           <ComposedChart data={sortData} mb={4} height={200}>
             <XAxis dataKey="name" />
-
             <YAxis dataKey="commits" width={56} />
-
             <Line type="monotone" dataKey="name" stroke="#8a2be2" />
             <Tooltip />
             <Bar dataKey="commits" fill="#8a2be2" barSize={50} />
