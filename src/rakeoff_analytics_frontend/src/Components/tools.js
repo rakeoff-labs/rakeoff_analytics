@@ -107,7 +107,7 @@ export const getTotalCommits = async () => {
     stats:
       "https://api.github.com/repos/rakeoff-labs/rakeoff_statistics/contributors",
 
-    achievements:
+    bonus:
       "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
 
     dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
