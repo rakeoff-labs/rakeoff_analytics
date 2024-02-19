@@ -1,87 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Box, Flex, Image as ChakraImage, keyframes } from "@chakra-ui/react";
-import { MixofCs, Footer, BottomStat } from "./Components";
-import {
-  getRakeoffStats,
-  e8sToIcp,
-  icpToDollars,
-  GrabIcpPrice,
-  getRakeoffTvl,
-  getTotalCommits,
-} from "./Components/tools";
+import { BannerComponents, Footer, BottomStat, Error } from "./Components";
+
 import rakeoffLogo from "../assets/rakeoff_logo_white.svg";
+import { RakeoffContext } from "./store/Rakeoff-context";
 
 const fadeInOut = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.1); }  // Adjust the scale value for more or less "zoom"
   100% { transform: scale(1); }
 `;
-
 const App = () => {
-  const [rakeoffStats, setRakeoffStats] = useState({}); // empty object
-  const [loaded, setLoaded] = useState(false);
-
-  const fetchStats = async () => {
-    // do all the stat work here
-    const [icpPrice, tvlData, stats, totalCommits] = await Promise.all([
-      GrabIcpPrice(),
-      getRakeoffTvl(),
-      getRakeoffStats(),
-      getTotalCommits(),
-    ]);
-
-    // set the stats
-    setRakeoffStats({
-      icp_price: icpPrice.toFixed(2),
-      total_stakers: stats.total_stakers.toLocaleString(),
-      total_staked_amount: Math.round(
-        e8sToIcp(Number(stats.total_staked))
-      ).toLocaleString(),
-      highest_pool_win_amount: e8sToIcp(
-        Number(stats.highest_win_amount)
-      ).toFixed(2),
-      highest_pool_amount: e8sToIcp(Number(stats.highest_pool)).toFixed(2),
-      total_pool_winners: stats.total_winners_processed.toLocaleString(),
-      claimed_from_achievements: Math.round(
-        e8sToIcp(Number(stats.claimed_from_achievements))
-      ).toFixed(2),
-      total_claims_from_achievments: Math.round(
-        Number(stats.total_neurons_in_achievements)
-      ).toLocaleString(),
-      total_rewards: icpToDollars(icpPrice, Number(stats.total_rewarded)),
-      total_fees: e8sToIcp(Number(stats.fees_collected)).toFixed(2),
-      fees_from_disbursement: e8sToIcp(stats.fees_from_disbursement).toFixed(2),
-      fees_from_prize_pool: e8sToIcp(
-        Number(stats.fees_collected) - Number(stats.fees_from_disbursement)
-      ).toFixed(2),
-      average_stake_amount: Math.round(
-        Math.round(e8sToIcp(Number(stats.total_staked))) /
-          Number(stats.total_stakers)
-      ), // custom calculation
-      average_pool_win: e8sToIcp(stats.average_win_amount).toFixed(2),
-      average_icp_per_pool: e8sToIcp(stats.average_per_pool).toFixed(2),
-      total_successful_pools: stats.total_pools_successfully_completed,
-      total_transaction_failures: stats.total_winner_processing_failures,
-      pool_history: stats.pool_history_chart_data,
-      tvl_history: tvlData,
-      totalCommits,
-    });
-
-    // everything is loaded
-    setLoaded(true);
-  };
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  const { loaded, error } = useContext(RakeoffContext);
 
   return (
     <Box>
       {loaded ? (
         <>
-          <MixofCs {...rakeoffStats} />
-          <BottomStat {...rakeoffStats} />
-          <Footer />
+          {!error ? (
+            <>
+              <BannerComponents />
+              <BottomStat />
+              <Footer />
+            </>
+          ) : (
+            // for Rakeoff API
+            <Error />
+          )}
         </>
       ) : (
         <Flex h="100vh" align="center" justify="center">

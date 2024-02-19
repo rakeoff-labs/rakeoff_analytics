@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Container,
@@ -8,36 +8,18 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 import Navbar from "./Navbar";
-import Graph from "./Graph";
+import AllCharts from "./Graphs/AllCharts";
 import { RakeoffGrey, boxBackgroundColor } from "./colors";
+import { RakeoffContext } from "../store/Rakeoff-context";
 
-const MixofCs = ({
-  total_stakers,
-  total_staked_amount,
-  icp_price,
-  tvl_history,
-  commit_history,
-  pool_history,
-  average_stake_amount,
-  totalCommits,
-  objects,
-}) => {
+const BannerComponents = () => {
   return (
     <Box position="relative">
       <Navbar />
-      <Banner
-        icpStakers={total_stakers}
-        stakedAmount={total_staked_amount}
-        icpPrice={icp_price}
-        averageStake={average_stake_amount}
-      />
-      <Graph
-        tvlChartData={tvl_history}
-        commitsChartData={commit_history}
-        poolHistoryChartData={pool_history}
-        totalCommits={totalCommits}
-        objects={objects}
-      />
+
+      <Banner />
+      <AllCharts />
+
       <Box
         position="absolute"
         top="0"
@@ -51,9 +33,11 @@ const MixofCs = ({
   );
 };
 
-export default MixofCs;
+export default BannerComponents;
 
-const Banner = ({ icpStakers, stakedAmount, averageStake, icpPrice }) => {
+const Banner = () => {
+  const { rakeoffStats } = useContext(RakeoffContext);
+
   return (
     <Container
       maxW="7xl"
@@ -82,10 +66,16 @@ const Banner = ({ icpStakers, stakedAmount, averageStake, icpPrice }) => {
         w={{ base: "100%", md: "55%" }}
         my={6}
       >
-        <StatItem title={"ICP price"} stat={`$${icpPrice}`} />
-        <StatItem title={"Total Stakers"} stat={icpStakers} />
-        <StatItem title={"ICP staked"} stat={stakedAmount} />
-        <StatItem title={"Average stake"} stat={averageStake} />
+        <StatItem title={"ICP price"} stat={`$${rakeoffStats.icp_price}`} />
+        <StatItem title={"Total Stakers"} stat={rakeoffStats.total_stakers} />
+        <StatItem
+          title={"ICP staked"}
+          stat={rakeoffStats.total_staked_amount}
+        />
+        <StatItem
+          title={"Average stake"}
+          stat={rakeoffStats.average_stake_amount}
+        />
       </SimpleGrid>
     </Container>
   );

@@ -1,5 +1,9 @@
-export { default as MixofCs } from "./MixofCs";
+export { default as BannerComponents } from "./BannerComponents";
 export { default as Footer } from "./Footer";
 export { default as BottomStat } from "./BottomStat";
-export { default as Graph } from "./Graph";
 export { default as Navbar } from "./Navbar";
+export { default as AllCharts } from "./Graphs/AllCharts";
+export { default as PoolHistory } from "./Graphs/PoolHistory";
+export { default as StakedTVL } from "./Graphs/StakedTVL";
+export { default as GitHub } from "./Graphs/GitHub";
+export { default as Error } from "./Error";
