@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
+import { Flex, Heading, Image } from "@chakra-ui/react";
 import rakeoffLogo from "../../assets/rakeoff_logo_white.svg";
 
 export default function Error() {
