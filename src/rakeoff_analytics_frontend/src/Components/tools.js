@@ -111,8 +111,6 @@ export const getTotalCommits = async () => {
       "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
 
     dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
-
-    rICP: "https://api.github.com/repos/rakeoff-labs/rakeoff_liquid/contributors",
   };
 
   const apiPromises = Object.entries(rAPIs).map((objectItem) => {
