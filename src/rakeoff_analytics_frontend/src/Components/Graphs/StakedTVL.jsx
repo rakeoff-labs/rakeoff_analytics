@@ -31,7 +31,7 @@ const StakedTVL = () => {
 
   const latestValue = roundUplatest(
     formattedData[formattedData.length - 1].usd,
-    100000
+    500000
   );
 
   return (
