@@ -77,13 +77,7 @@ export function roundUplatest(number, factor) {
 }
 
 const getCommitContribution = async (link) => {
-  const token = process.env.REACT_APP_GITHUB_TOKEN;
-
-  const res = await fetch(link[1], {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(link[1]);
 
   if (!res.ok) {
     console.error(`Could not fetch ${link} data`);
@@ -109,8 +103,6 @@ export const getTotalCommits = async () => {
 
     bonus:
       "https://api.github.com/repos/rakeoff-labs/rakeoff_achievements/contributors",
-
-    dApp: "https://api.github.com/repos/rakeoff-labs/rakeoff/contributors",
   };
 
   const apiPromises = Object.entries(rAPIs).map((objectItem) => {
